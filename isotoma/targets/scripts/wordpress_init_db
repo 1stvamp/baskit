@@ -1,0 +1,69 @@
+#!/usr/bin/env php
+<?php
+if (!isset($argv[1]) || $argv[1] == 'install') {
+    function shutdown() {
+	if (!$GLOBALS['_STOP_HAMMER_TIME']) {
+            ob_end_clean();
+            echo 'Wordpress DB already installed, skipping..';
+	}
+    }
+    register_shutdown_function('shutdown');
+    $_STOP_HAMMER_TIME = false;
+
+    $_GET = array('step' => 2);
+    $_POST = array();
+    $_POST['weblog_title'] = <<<EOT
+${wordpress.site.title}
+EOT;
+    $_POST['user_name'] = <<<EOT
+${wordpress.site.admin_username}
+EOT;
+    $_POST['admin_password'] = <<<EOT
+${wordpress.site.admin_password}
+EOT;
+    $_POST['admin_password2'] = <<<EOT
+${wordpress.site.admin_password}
+EOT;
+    $_POST['admin_email'] = <<<EOT
+${wordpress.site.admin_email}
+EOT;
+    array_walk($_POST, function(&$item) { trim($item); });
+
+    ob_start();
+    require '${wp_dest}/wp-admin/install.php';
+    $output = ob_get_contents();
+    ob_end_clean();
+
+    $_STOP_HAMMER_TIME = true;
+    if (strpos($output, 'Success!') !== false) {
+        echo 'Wordpress DB installed successfully.';
+        exit(0);
+    } else {
+        echo "Coulnd't install Wordpress DB.";
+        exit(1);
+    }
+} else {
+    require '${application.startdir}/parts/wordpress/wp-load.php';
+    require '${application.startdir}/parts/wordpress/wp-admin/includes/admin.php';
+    if ($argv[1] == 'init_plugin') {
+        $active_plugins = get_settings('active_plugins');
+        $plugin = $argv[2] . '/' . $argv[2] . '.php';
+        if (in_array($plugin, $active_plugins)) {
+            echo '\'' . $argv[2] . '\' plugin already activated, deactivating..' . PHP_EOL;
+            update_option('active_plugins', array_diff($active_plugins, array($plugin)));
+        } else {
+            $active_plugins[] = $plugin;
+        }
+        update_option('active_plugins', $active_plugins);
+        echo 'Activated \'' . $argv[2] . '\' plugin in Wordpress.';
+    } else if ($argv[1] == 'init_theme') {
+        if (get_stylesheet() == trim($argv[3])) {
+            echo '\''.$argv[3].'\' theme already activated in Wordpress, deactivating..' . PHP_EOL;
+            switch_theme('default', 'default');
+        }
+        switch_theme($argv[2], $argv[3]);
+        echo 'Activated \'' . $argv[3] . '\' theme in Wordpress.';
+    }
+    exit(0);
+}
+exit(1);

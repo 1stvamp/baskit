@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="isotoma.targets.apache" default="build_conf">
+    <mkdir dir="${isotoma.vardir}/apache"/>
+    <target name="build_conf">
+        <copy file="isotoma/apache/vhost.conf" tofile="${isotoma.vardir}/apache/vhost.conf" overwrite="true">
+            <filterchain>
+                <expandproperties />
+            </filterchain>
+	</copy>
+        <echo>Generated ${isotoma.vardir}/apache/vhost.conf</echo>
+    </target>
+</project>

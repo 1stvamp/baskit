@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="isotoma.targets.wordpress" default="install">
+    <target name="install">
+        <!-- If isotoma.tmpdir isn't set, use the system temp (normally /tmp) -->
+        <php returnProperty="sys_tmp" function="sys_get_temp_dir" />
+        <property name="isotoma.tmpdir" value="${sys_tmp}" override="no"/>
+
+	<property name="cache" value="${application.startdir}/cache" />
+	<property name="wp_cache" value="${cache}/wordpress-${wordpress.version}.tar.gz" />
+	<property name="wp_src" value="${isotoma.tmpdir}/wordpress" />
+	<property name="wp_dest" value="${application.startdir}/parts/wordpress"/>
+
+	<available file="${wp_dest}" property="wp_dest_exists" type="dir"/>
+
+	<copy file="${application.startdir}/isotoma/targets/scripts/wordpress_init_db"
+	    todir="${application.startdir}/bin" overwrite="true">
+	    <filterchain>
+		<expandproperties />
+	    </filterchain>
+	</copy>
+	<chmod file="${application.startdir}/bin/wordpress_init_db" mode="0755" />
+
+        <!-- Check if we have the correct wordpress version installed -->
+        <property file="${isotoma.vardir}/wordpress.version"/>
+	<if>
+            <or>
+                <not>
+                    <equals arg1="${wordpress.installed_version}" arg2="${wordpress.version}" />
+                </not>
+                <not>
+                    <isset property="wp_dest_exists"/>
+                </not>
+                <isfalse value="${wp_dest_exists}"/>
+            </or>
+            <then>
+                <echo>Wordpress v${wordpress.version} required, installing..</echo>
+		<mkdir dir="${wp_dest}" />
+
+                <!-- Try to use the cache if it exists -->
+		<available file="${wp_cache}" property="wp_cache_exists" type="file"/>
+                <if>
+                    <or>
+                        <not>
+                            <isset property="wp_cache_exists"/>
+                        </not>
+                        <isfalse value="${wp_cache_exists}"/>
+                    </or>
+                    <then>
+                        <!-- Cache doesn't exist, go get the tar -->
+			<httpget url="http://wordpress.org/wordpress-${wordpress.version}.tar.gz" dir="${cache}"/>
+		    </then>
+		    <else>
+			<echo>Using ${wp_cache}</echo>
+		    </else>
+		</if>
+		<untar file="${wp_cache}" todir="${isotoma.tmpdir}" />
+
+                <!-- Copy over all the new wordpress files -->
+		<copy todir="${wp_dest}" overwrite="true" includeemptydirs="true">
+		    <fileset dir="${wp_src}">
+			<include name="**/*" />
+		    </fileset>
+		</copy>
+
+                <!-- Generate wordpress config, replacing variables with properties -->
+                <copy file="${isotoma.srcdir}/wordpress/wp-config.php" todir="${wp_dest}" overwrite="true">
+                    <filterchain>
+                        <expandproperties />
+                    </filterchain>
+                </copy>
+                <echo>Generated ${wp_dest}/wp-config.php</echo>
+
+		<delete dir="${wp_src}" includeemptydirs="true" failonerror="true" />
+                <!-- Write the installed version out to a property file -->
+                <echo file="${isotoma.vardir}/wordpress.version" append="false">wordpress.installed_version=${wordpress.version}</echo>
+
+                <!-- Install Wordpress DB config -->
+                <propertyprompt propertyName="wordpress.site.admin_username" defaultValue=""
+                    useExistingValue="true" promptText="Wordpress admin username" />
+                <propertyprompt propertyName="wordpress.site.admin_password" defaultValue=""
+                    useExistingValue="true" promptText="Wordpress admin password" />
+                <propertyprompt propertyName="wordpress.site.admin_email" defaultValue=""
+                    useExistingValue="true" promptText="Wordpress admin email address" />
+
+                <exec command="${application.startdir}/bin/wordpress_init_db install" logoutput="true"/>
+	    </then>
+	    <else>
+                <echo>Wordpress v${wordpress.version} already installed at ${wp_dest}, skipping..</echo>
+	    </else>
+	</if>
+
+        <copy todir="${wp_dest}" overwrite="true" includeemptydirs="true">
+            <fileset dir="${isotoma.srcdir}/wordpress">
+                <include name="**/*" />
+                <exclude name="**/wp-config.php"/>
+            </fileset>
+        </copy>
+        <echo>Copied Wordpress customisations from ${isotoma.srcdir}/wordpress</echo>
+
+        <!-- Replace copied fourthestate theme & plugin with symlinks so changes show immediately while in development.-->
+        <if>
+            <equals arg1="${isotoma.env}" arg2="dev" />
+            <then>
+                <delete dir="${application.startdir}/parts/wordpress/wp-content/themes/fourthestate" includeemptydirs="true" />
+                <symlink target="${isotoma.srcdir}/wordpress/wp-content/themes/fourthestate" link="${application.startdir}/parts/wordpress/wp-content/themes/fourthestate" />
+                <delete dir="${application.startdir}/parts/wordpress/wp-content/plugins/fourthestate" includeemptydirs="true" />
+                <symlink target="${isotoma.srcdir}/wordpress/wp-content/plugins/fourthestate" link="${application.startdir}/parts/wordpress/wp-content/plugins/fourthestate" />
+            </then>
+        </if> 
+        
+        <property file="${isotoma.vardir}/wordpress.plugin.versions"/>
+        <foreach list="${wordpress.plugins}" param="plugin_shortname" target="install_plugin" delimiter=","/>
+    </target>
+
+    <target name="install_plugin">
+        <property name="plugin_name" value="${wordpress.${plugin_shortname}.name}" override="true"/>
+        <property name="plugin_version" value="${wordpress.${plugin_shortname}.version}" override="true"/>
+        <property name="plugin_enabled" value="${wordpress.${plugin_shortname}.enabled}" override="true"/>
+        <property name="plugin_cache" value="${cache}/${plugin_name}.${plugin_version}.zip" override="true"/>
+        <property name="plugin_src" value="${isotoma.tmpdir}/${plugin_name}" override="true"/>
+        <property name="plugin_dest" value="${wp_dest}/wp-content/plugins/${plugin_name}" override="true"/>
+
+        <available file="${plugin_dest}" property="plugin_dest_exists" type="dir"/>
+
+        <if>
+	    <equals arg1="${plugin_shortname}" arg2=""/>
+	    <then>
+		<!-- Blank value passed by foreach, do nothing -->
+	    </then>
+	    <elseif>
+		<!-- Check if the plugin is enabled or not -->
+		<isfalse value="${plugin_enabled}" />
+		<then>
+		    <echo>Wordpress '${plugin_name}' plugin disabled, skipping..</echo>
+		</then>
+	    </elseif>
+            <elseif>
+                <!-- Check if we have the correct content types plugin version installed -->
+                <or>
+                    <not>
+                        <equals arg1="${wordpress.${plugin_shortname}.installed_version}" arg2="${plugin_version}" />
+                    </not>
+                    <not>
+                        <isset property="plugin_dest_exists"/>
+                    </not>
+                    <isfalse value="${plugin_dest_exists}"/>
+                </or>
+                <then>
+                    <echo>Wordpress '${plugin_name}' plugin v${plugin_version} required, installing..</echo>
+                    <mkdir dir="${plugin_dest}" />
+
+                    <!-- Try to use the cache if it exists -->
+                    <available file="${plugin_cache}" property="plugin_cache_exists" type="file"/>
+                    <if>
+                        <or>
+                            <not>
+                                <isset property="plugin_cache_exists"/>
+                            </not>
+                            <isfalse value="${plugin_cache_exists}"/>
+                        </or>
+                        <then>
+                            <!-- Cache doesn't exist, go get the tar -->
+                            <httpget url="http://downloads.wordpress.org/plugin/${plugin_name}.${plugin_version}.zip" dir="${cache}"/>
+                        </then>
+                        <else>
+                            <echo>Using ${plugin_cache}</echo>
+                        </else>
+                    </if>
+                    <unzip file="${plugin_cache}" todir="${isotoma.tmpdir}" />
+
+                    <!-- Copy over all the new plugin files -->
+                    <copy todir="${plugin_dest}" overwrite="true" includeemptydirs="true">
+                        <fileset dir="${plugin_src}">
+                            <include name="**/*" />
+                        </fileset>
+                    </copy>
+
+                    <!-- Write the installed version out to a property file -->
+		    <echo file="${isotoma.vardir}/wordpress.plugin.versions" append="true">wordpress.${plugin_shortname}.installed_version=${plugin_version}
+</echo>
+
+                    <!-- Activate the plugin in Wordpress -->
+                    <exec command="${application.startdir}/bin/wordpress_init_db init_plugin ${plugin_name}" logoutput="true"/>
+                </then>
+            </elseif>
+            <else>
+                <echo>Wordpress '${plugin_name}' plugin v${plugin_version} already installed at ${plugin_dest}, skipping..</echo>
+            </else>
+        </if>
+    </target>
+</project>

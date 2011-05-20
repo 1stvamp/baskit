@@ -1,0 +1,94 @@
+<?xml version="1.0" ?>
+<project name="isotoma.migrations" default="migrate">
+    <!-- Sets the DSTAMP, TSTAMP and TODAY properties -->
+    <tstamp/>
+    <property name="isotoma.migrations.mysqlbin" value="mysql" override="false"/>
+    <property name="isotoma.migrations.sql.deployfile"
+        value="${isotoma.vardir}/deploy_scripts/deploy-${DSTAMP}${TSTAMP}.sql" override="false"/>
+    <property name="isotoma.migrations.sql.undofile"
+        value="${isotoma.vardir}/deploy_scripts/undo-${DSTAMP}${TSTAMP}.sql" override="false"/>
+    <property name="isotoma.migrations.php.deployfile"
+        value="${isotoma.vardir}/deploy_scripts/deploy-${DSTAMP}${TSTAMP}.php" override="false"/>
+    <property name="isotoma.migrations.php.undofile"
+        value="${isotoma.vardir}/deploy_scripts/undo-${DSTAMP}${TSTAMP}.php" override="false"/>
+
+    <!-- Create our migration task -->
+    <target name="migrate" description="Database Migrations">
+        <echo>Running DB migrations..</echo>
+
+        <mkdir dir="${isotoma.vardir}/deploy_scripts"/>
+
+        <!-- Make sure we have the migrations table -->
+        <copy file="${application.startdir}/isotoma/targets/scripts/create_migrations_table"
+            todir="${application.startdir}/bin" overwrite="true">
+            <filterchain>
+                <expandproperties/>
+            </filterchain>
+        </copy>
+        <chmod file="${application.startdir}/bin/create_migrations_table" mode="0755"/>
+        <exec command="${application.startdir}/bin/create_migrations_table" logoutput="true"/>
+
+        <!-- Load the tasks -->
+        <taskdef name="dbdeploy" classname="phing.tasks.ext.dbdeploy.DbDeployTask"/>
+        <taskdef name="phpmigrate" classname="isotoma.tasks.PhpMigrateTask"/>
+
+        <!-- Generate the deployment scripts -->
+        <dbdeploy
+            url="mysql:host=${isotoma.db.host};dbname=${isotoma.db.database}"
+            userid="${isotoma.db.username}"
+            password="${isotoma.db.password}"
+	    dir="${application.startdir}/migrations/sql"
+            outputfile="${isotoma.migrations.sql.deployfile}"
+            undooutputfile="${isotoma.migrations.sql.undofile}" />
+
+        <filesize file="${isotoma.migrations.sql.deployfile}" propertyName="sql_deployfile_size"/>
+        <if>
+            <equals arg1="${sql_deployfile_size}" arg2="0"/>
+            <then>
+                <echo>No SQL changes to apply, skipping..</echo>
+                <delete file="${isotoma.migrations.sql.deployfile}" quiet="true"/>
+                <delete file="${isotoma.migrations.sql.undofile}" quiet="true"/>
+            </then>
+            <else>
+                <!-- Execute the SQL - Use mysql command line to avoid trouble with large files or many statements and PDO -->
+                <echo>Applying SQL DB changes..</echo>
+                <exec
+                    command="${isotoma.migrations.mysqlbin} -h${isotoma.db.host} -u${isotoma.db.username} -p${isotoma.db.password} ${isotoma.db.database} &lt; ${isotoma.migrations.sql.deployfile}"
+                    dir="${application.startdir}"
+                    checkreturn="true"
+                    logoutput="true"/>
+            </else>
+        </if>
+
+        <phpmigrate
+            url="mysql:host=${isotoma.db.host};dbname=${isotoma.db.database}"
+            userid="${isotoma.db.username}"
+            password="${isotoma.db.password}"
+	    dir="${application.startdir}/migrations/php"
+            outputfile="${isotoma.migrations.php.deployfile}"
+            undooutputfile="${isotoma.migrations.php.undofile}" />
+
+        <filesize file="${isotoma.migrations.php.deployfile}.sql" propertyName="php_deployfile_size"/>
+        <if>
+            <equals arg1="${php_deployfile_size}" arg2="0"/>
+            <then>
+                <echo>No PHP changes to apply, skipping..</echo>
+                <delete file="${isotoma.migrations.php.deployfile}" quiet="true"/>
+                <delete file="${isotoma.migrations.php.deployfile}.sql" quiet="true"/>
+            </then>
+            <else>
+                <echo>Applying PHP DB changes..</echo>
+		<chmod file="${isotoma.migrations.php.deployfile}" mode="0755"/>
+                <exec
+		    command="${isotoma.migrations.php.deployfile} migrate"
+                    checkreturn="true"
+                    logoutput="true"/>
+                <exec
+                    command="${isotoma.migrations.mysqlbin} -h${isotoma.db.host} -u${isotoma.db.username} -p${isotoma.db.password} ${isotoma.db.database} &lt; ${isotoma.migrations.php.deployfile}.sql"
+                    dir="${application.startdir}"
+                    checkreturn="true"
+                    logoutput="true"/>
+            </else>
+        </if>
+    </target>
+</project>

@@ -19,13 +19,13 @@ To create a new environment:
 
     php bootstrap.php
 
-Which will give you a ./bin directory with scripts for PEAR and Phing:
+Which will give you a `./bin` directory with scripts for PEAR and Phing:
 
     bin/pear version
     bin/phing -version
     bin/pear install Net_URL2
 
-And a ./parts directory containing PEAR itself:
+And a `./parts` directory containing PEAR itself:
 
     ls parts/pear/php/
 

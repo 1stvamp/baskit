@@ -6,7 +6,7 @@ $cwd = getcwd() . '/';
 $parts = $cwd . 'parts/';
 $bin = $cwd . 'bin/';
 
-// Remove any existing dynamic paths
+// Create dynamic paths for environment
 if (!file_exists($parts)) {
         mkdir($parts);
         echo "Created ${parts}" . PHP_EOL;

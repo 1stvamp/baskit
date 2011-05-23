@@ -1,5 +1,15 @@
 #!/usr/bin/env php
 <?php
+/**
+ * baskit - sandboxed build environment for PHP, PEAR and Phing
+ *
+ * @package Baskit
+ * @version 1.0.0
+ * @author Wes Mason <wes.mason@isotoma.com>
+ * @copyright 2011 Isotoma Limited
+ * @license http://opensource.org/licenses/Apache-2.0 Apache License, Version 2.0
+ */
+
 // Setup all the paths
 $home = getenv('HOME') . '/';
 $cwd = getcwd() . '/';

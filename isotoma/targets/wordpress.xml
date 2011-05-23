@@ -4,6 +4,7 @@
         <!-- If isotoma.tmpdir isn't set, use the system temp (normally /tmp) -->
         <php returnProperty="sys_tmp" function="sys_get_temp_dir" />
         <property name="isotoma.tmpdir" value="${sys_tmp}" override="no"/>
+        <property name="isotoma.wordpress.freshbuild" value="false" />
 
 	<property name="cache" value="${application.startdir}/cache" />
 	<property name="wp_cache" value="${cache}/wordpress-${wordpress.version}.tar.gz" />
@@ -35,6 +36,7 @@
             <then>
                 <echo>Wordpress v${wordpress.version} required, installing..</echo>
 		<mkdir dir="${wp_dest}" />
+                <property name="isotoma.wordpress.freshbuild" value="true" override="yes" />
 
                 <!-- Try to use the cache if it exists -->
 		<available file="${wp_cache}" property="wp_cache_exists" type="file"/>
@@ -90,7 +92,7 @@
 	</if>
 
         <copy todir="${wp_dest}" overwrite="true" includeemptydirs="true">
-            <fileset dir="${isotoma.srcdir}/wordpress">
+            <fileset dir="${application.startdir}/src/4th-estate/wordpress">
                 <include name="**/*" />
                 <exclude name="**/wp-config.php"/>
             </fileset>

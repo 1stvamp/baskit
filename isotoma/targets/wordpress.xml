@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Phing target for installing Wordpress and Wordpress plugins, supports versioning and caching. -->
 <project name="isotoma.targets.wordpress" default="install">
     <target name="install">
         <!-- If isotoma.tmpdir isn't set, use the system temp (normally /tmp) -->
@@ -126,7 +127,7 @@
 		</then>
 	    </elseif>
             <elseif>
-                <!-- Check if we have the correct content types plugin version installed -->
+                <!-- Check if we have the correct plugin version installed -->
                 <or>
                     <not>
                         <equals arg1="${wordpress.${plugin_shortname}.installed_version}" arg2="${plugin_version}" />
@@ -151,7 +152,7 @@
                         </or>
                         <then>
                             <!-- Cache doesn't exist, go get the tar -->
-                            <httpget url="http://downloads.wordpress.org/plugin/${plugin_name}.${plugin_version}.zip" dir="${cache}"/>
+                            <httpget url="http://downloads.wordpress.org/plugin/${plugin_name}.${plugin_version}.zip" dir="${plugin_cache}"/>
                         </then>
                         <else>
                             <echo>Using ${plugin_cache}</echo>

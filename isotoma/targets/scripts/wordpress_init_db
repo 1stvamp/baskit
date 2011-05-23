@@ -1,5 +1,16 @@
 #!/usr/bin/env php
 <?php
+/**
+ * CLI script to bootstrap Wordpress database, by calling the installer
+ * functions from Wordpress itself, as well as enable plugins and themes.
+ *
+ * @package Baskit
+ * @version 1.0.0
+ * @author Wes Mason <wes.mason@isotoma.com>
+ * @copyright 2011 Isotoma Limited
+ * @license http://opensource.org/licenses/Apache-2.0 Apache License, Version 2.0
+ */
+
 if (!isset($argv[1]) || $argv[1] == 'install') {
     function shutdown() {
 	if (!$GLOBALS['_STOP_HAMMER_TIME']) {

@@ -25,9 +25,9 @@ if (file_exists("${home}.pearrc")) {
 
 // Use the system isntalled PEAR to generate a local copy
 echo 'Creating sandboxed ~/.pearrc' . PHP_EOL;
-exec("pear config-create ${parts} ${home}.pearrc 2>&", $out);
+exec("pear config-create ${parts} ${home}.pearrc 2>&1", $out);
 echo implode(PHP_EOL, $out);
-exec('pear install -o PEAR  2>&', $out);
+exec('pear install -o PEAR  2>&1', $out);
 echo implode(PHP_EOL, $out);
 rename("${home}.pearrc", "${cwd}.pearrc");
 
@@ -45,9 +45,9 @@ chmod("${bin}pear", 0755);
 echo 'Created bin/pear' . PHP_EOL;
 
 // Install Phing locally and wrap it's script
-exec("${bin}pear channel-discover pear.phing.info  2>&", $out);
+exec("${bin}pear channel-discover pear.phing.info  2>&1", $out);
 echo implode(PHP_EOL, $out);
-exec("${bin}pear install phing/phing-2.4.5  2>&", $out);
+exec("${bin}pear install phing/phing-2.4.5  2>&1", $out);
 echo implode(PHP_EOL, $out);
 if (file_exists("${bin}phing")) {
         unlink("${bin}phing");

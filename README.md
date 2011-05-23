@@ -13,6 +13,17 @@ To install baskit locally clone the git repository into your project.
 
 **TODO: create PEAR channel and add steps to install here**
 
+The requirements for _baskit_ are:
+
+ * PHP 5+
+ * PEAR (not PEAR2, but maybe in the future)
+
+If you wish to create a local version of PEAR separate from your system, you can use the following steps (we can't do this for you unfortunately due to limitations in `go-pear`):
+
+    curl http://pear.php.net/go-pear.phar | php
+
+And just define your local project dirs as the base for the install.
+
 Usage
 -----
 To create a new environment:

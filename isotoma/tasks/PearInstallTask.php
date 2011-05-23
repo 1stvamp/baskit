@@ -1,6 +1,21 @@
 <?php
+/**
+ * PEAR installer task package for Phing
+ *
+ * @package Baskit
+ * @version 1.0.0
+ * @author Wes Mason <wes.mason@isotoma.com>
+ * @copyright 2011 Isotoma Limited
+ * @license http://opensource.org/licenses/Apache-2.0 Apache License, Version 2.0
+ */
+
 require_once "phing/Task.php";
 
+/**
+ * PEAR installer task for Phing
+ *
+ * @package Baskit
+ */
 class PearInstallTask extends Task {
 
     /**

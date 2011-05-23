@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Phing target for installing non-PEARable requirements from the web, supports caching,
+versioining, gzipped tars and zips. -->
+<project name="isotoma.targets.install_requirements" default="install">
+    <target name="install">
+        <!-- If isotoma.tmpdir isn't set, use the system temp (normally /tmp) -->
+        <php returnProperty="sys_tmp" function="sys_get_temp_dir" />
+        <property name="isotoma.tmpdir" value="${sys_tmp}" override="no"/>
+	<property name="cache" value="${application.startdir}/cache" />
+
+        <property file="${isotoma.vardir}/requirements.versions"/>
+        <foreach list="${isotoma.requirements}" param="req_shortname" target="install_req" delimiter=","/>
+    </target>
+
+    <target name="install_req">
+        <property name="req_name" value="${isotoma.requirements.${req_shortname}.name}" override="true"/>
+        <property name="req_version" value="${isotoma.requirements.${req_shortname}.version}" override="true"/>
+        <property name="req_url" value="${isotoma.requirements.${req_shortname}.url}" override="true"/>
+	<property name="req_enabled" value="${isotoma.requirements.${req_shortname}.enabled}" override="true"/>
+	
+	<property name="req_iszip" value="${isotoma.requirements.${req_shortname}.iszip" override="true" />
+	<if>
+	    <istrue "req_iszip" />
+	    <then>
+		<property name="req_ext" value="zip" override="true" />
+	    </then>
+	    <else>
+		<property name="req_ext" value="tgz" override="true" />
+	    </else>
+	</if>
+
+	<property name="req_cache" value="${cache}/${req_name}.${req_version}.${req_ext}" override="true"/>
+        <property name="req_src" value="${isotoma.tmpdir}/${req_name}" override="true"/>
+	<property name="req_dest" value="${isotoma.partsidr}/${req_name}" override="true"/>
+
+        <available file="${req_dest}" property="req_dest_exists" type="dir"/>
+
+        <if>
+	    <equals arg1="${req_shortname}" arg2=""/>
+	    <then>
+		<!-- Blank value passed by foreach, do nothing -->
+	    </then>
+	    <elseif>
+		<!-- Check if the req is enabled or not -->
+		<isfalse value="${req_enabled}" />
+		<then>
+		    <echo>Non-PEAR requirement '${req_name}' req disabled, skipping..</echo>
+		</then>
+	    </elseif>
+            <elseif>
+                <!-- Check if we have the correct version installed -->
+                <or>
+                    <not>
+                        <equals arg1="${isotoma.requirements.${req_shortname}.installed_version}" arg2="${req_version}" />
+                    </not>
+                    <not>
+                        <isset property="req_dest_exists"/>
+                    </not>
+                    <isfalse value="${req_dest_exists}"/>
+                </or>
+                <then>
+                    <echo>Non-PEAR requirement '${req_name}' v${req_version} required, installing..</echo>
+                    <mkdir dir="${req_dest}" />
+
+                    <!-- Try to use the cache if it exists -->
+                    <available file="${req_cache}" property="req_cache_exists" type="file"/>
+                    <if>
+                        <or>
+                            <not>
+                                <isset property="req_cache_exists"/>
+                            </not>
+                            <isfalse value="${req_cache_exists}"/>
+                        </or>
+                        <then>
+                            <!-- Cache doesn't exist, go get the tar -->
+                            <httpget url="${req_url}" dir="${req_cache}"/>
+                        </then>
+                        <else>
+                            <echo>Using ${req_cache}</echo>
+                        </else>
+		    </if>
+		    <if>
+			<istrue arg1="${req_iszip}" />
+			<then>
+			    <unzip file="${req_cache}" todir="${isotoma.tmpdir}" />
+			</then>
+			<else>
+			    <untar file="${req_cache}" todir="${isotoma.tmpdir}" />
+			</else>
+		    </if>
+
+                    <!-- Copy over all the new req files -->
+                    <copy todir="${req_dest}" overwrite="true" includeemptydirs="true">
+                        <fileset dir="${req_src}">
+                            <include name="**/*" />
+                        </fileset>
+                    </copy>
+
+                    <!-- Write the installed version out to a property file -->
+		    <echo file="${isotoma.vardir}/isotoma.requirements.versions" append="true">isotoma.requirements.${req_shortname}.installed_version=${req_version}
+</echo>
+                </then>
+            </elseif>
+            <else>
+                <echo>Non-PEAR requirement '${req_name}' v${req_version} already installed at ${req_dest}, skipping..</echo>
+            </else>
+        </if>
+    </target>
+</project>

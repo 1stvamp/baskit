@@ -96,8 +96,9 @@ class PearInstallTask extends Task {
         $cwd = $this->getCwd();
         exec("${cwd}/bin/pear install ${name} 2>&1", $output, $ret);
         array_pop($output);
-	$this->log(implode(PHP_EOL, $output) . PHP_EOL);
-	if ($ret > 0) {
+        $out = implode(PHP_EOL, $output);
+	$this->log($out . PHP_EOL);
+	if (strpos($out, 'already installed') === false && $ret > 0) {
             throw new BuildException('PEAR install failed.');
 	}
     }

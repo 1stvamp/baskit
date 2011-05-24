@@ -27,6 +27,8 @@ Which will give you a `./bin` directory with scripts for PEAR and Phing:
 
     bin/pear version
     bin/phing -version
+    
+    # This will install PEAR's Net_URL2 into the local build environment
     bin/pear install Net_URL2
 
 And a `./parts` directory containing PEAR itself:

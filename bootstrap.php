@@ -78,5 +78,12 @@ file_put_contents(
 );
 echo 'Created bin/phing' . PHP_EOL;
 
+file_put_contents(
+    "${bin}php",
+    "#!/bin/sh\nphp -d include_path=${paths} \$@"
+);
+chmod("${bin}php", 0755);
+echo 'Created bin/php' . PHP_EOL;
+
 echo 'Done.' . PHP_EOL;
 exit(0);

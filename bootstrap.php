@@ -57,7 +57,7 @@ echo 'Created bin/pear' . PHP_EOL;
 // Install Phing locally and wrap it's script
 exec("${bin}pear channel-discover pear.phing.info  2>&1", $out);
 echo implode(PHP_EOL, $out) . PHP_EOL;
-exec("${bin}pear install phing/phing-2.4.5  2>&1", $out);
+exec("${bin}pear install phing/phing  2>&1", $out);
 echo implode(PHP_EOL, $out) . PHP_EOL;
 if (file_exists("${bin}phing")) {
         unlink("${bin}phing");

@@ -35,3 +35,18 @@ And a `./parts` directory containing PEAR itself:
 
     ls parts/pear/php/
 
+To make building your project and installing dependencies easier and more maintainable, _baskit_ includes some Phing tasks and targets:
+
+Phing Tasks
+===========
+
+ * **PearInstallTask** - A Phing task to install a depenedency into the local PEAR sandbox, also supports installing custom PEAR channels.
+ * **PhpMigrateTask** - A version of the core Phing **DbDeployTask** that allows running migrations written in PHP rather than SQL.
+
+Phing Targets
+=============
+
+ * **install_requirements.xml** - Installs a list of non-PEAR dependencies from web URLs, with version checking, caching and support for zips and gzipped tars.
+ * **migrations.xml** - Targets for deploying all undeployed SQL and PHP database migrations, or reverting to a migration in the past (if supported).
+ * **wordpress.xml** - Target for installing a Wordpress blog from scratch, and any Wordpress plugins, with version checking and caching.
+ * **apache.xml** - Convenience target for generating an Apache2 virtualhost conf file in `./var`.

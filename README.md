@@ -41,12 +41,12 @@ Phing Tasks
 ===========
 
  * **PearInstallTask** - A Phing task to install a depenedency into the local PEAR sandbox, also supports installing custom PEAR channels.
- * **PhpMigrateTask** - A version of the core Phing **DbDeployTask** that allows running migrations written in PHP rather than SQL.
+ * **PhpMigrateTask** - A version of the core Phing **DbDeployTask** that allows running migrations written in PHP rather than SQL, you can use this yourself or use the pre-written `migrations.xml` target (see *Phing Targets*).
 
 Phing Targets
 =============
 
  * **install_requirements.xml** - Installs a list of non-PEAR dependencies from web URLs, with version checking, caching and support for zips and gzipped tars.
- * **migrations.xml** - Targets for deploying all undeployed SQL and PHP database migrations, or reverting to a migration in the past (if supported).
+ * **migrations.xml** - Target for deploying all undeployed SQL and PHP database migrations (currently missing "undo" target for reverting to previous migration)..
  * **wordpress.xml** - Target for installing a Wordpress blog from scratch, and any Wordpress plugins, with version checking and caching.
  * **apache.xml** - Convenience target for generating an Apache2 virtualhost conf file in `./var`.

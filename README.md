@@ -17,6 +17,7 @@ The requirements for _baskit_ are:
 
  * [PHP](http://www.php.net/ "PHP") v5.0+
  * [PEAR](http://pear.php.net/ "PHP Extension and Application Repository") (not PEAR2, but maybe in the future)
+ * A Unix shell like bash or zsh (but it should be easy to support others, like CMD or PowerShell on Windows)
 
 Usage
 -----

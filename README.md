@@ -11,8 +11,6 @@ Installation
 ------------
 To install baskit locally clone the git repository into your project.
 
-**TODO: create PEAR channel and add steps to install here**
-
 The requirements for _baskit_ are:
 
  * [PHP](http://www.php.net/ "PHP") v5.0+

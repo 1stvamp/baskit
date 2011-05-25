@@ -1,5 +1,6 @@
 <?xml version="1.0" ?>
 <project name="isotoma.migrations" default="migrate">
+    <property file="isotoma/base.properties" override="no"/>
     <!-- Sets the DSTAMP, TSTAMP and TODAY properties -->
     <tstamp/>
     <property name="isotoma.migrations.mysqlbin" value="mysql" override="false"/>

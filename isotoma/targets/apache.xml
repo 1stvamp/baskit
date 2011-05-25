@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="isotoma.targets.apache" default="build_conf">
+    <property file="isotoma/base.properties" override="no"/>
     <mkdir dir="${isotoma.vardir}/apache"/>
     <target name="build_conf">
         <php returnProperty="php_include_path" function="get_include_path" />

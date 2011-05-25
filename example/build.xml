@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="baskit-example-project" default="build">
+    <property file="build.properties"/>
+    <property file="test.properties" override="no"/>
     <taskdef name="pearinstall" classname="isotoma.tasks.PearInstallTask" />
     <target name="build">
+	<echo>P: ${isotoma.partsdir}, S: ${isotoma.srcdir}</echo>
 	<!-- PEAR requirements -->
 	<!-- No version, will get latest -->
 	<pearinstall name="MDB2" />

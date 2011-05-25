@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="isotoma.targets.cache_dir" default="make_cache_dir">
+    <target name="make_cache_dir">
+	<available file="${isotoma.cachedir}" property="cache_dir_exists" type="dir"/>
+	<if>
+	    <or>
+		<not>
+		    <isset property="cache_dir_exists"/>
+		</not>
+		<isfalse value="${cache_dir_exists}"/>
+	    </or>
+	    <then>
+		<mkdir dir="${isotoma.cachedir}"/>
+	    </then>
+	</if>
+    </target>
+</project>

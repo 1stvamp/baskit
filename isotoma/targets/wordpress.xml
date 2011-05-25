@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Phing target for installing Wordpress and Wordpress plugins, supports versioning and caching. -->
 <project name="isotoma.targets.wordpress" default="install">
+    <property file="isotoma/base.properties" override="no"/>
     <taskdef name="pearinstall" classname="isotoma.tasks.PearInstallTask" />
+    <!-- We'll need these -->
+    <pearinstall name="Net_URL2" version="0.3.1"/>
+    <pearinstall name="HTTP_Request2" version="2.0.0beta3"/>
+    <phing phingfile="isotoma/targets/cache_dir.xml" inheritRefs="true" target="make_cache_dir"/>
     <target name="install">
-	<!-- We'll need these -->
-	<pearinstall name="Net_URL2" version="0.3.1"/>
-	<pearinstall name="HTTP_Request2" version="2.0.0beta3"/>
-
         <!-- If isotoma.tmpdir isn't set, use the system temp (normally /tmp) -->
         <php returnProperty="sys_tmp" function="sys_get_temp_dir" />
         <property name="isotoma.tmpdir" value="${sys_tmp}" override="no"/>
         <property name="isotoma.wordpress.freshbuild" value="false" />
 
-	<property name="cache" value="${application.startdir}/cache" />
-	<property name="wp_cache" value="${cache}/wordpress-${wordpress.version}.tar.gz" />
+	<property name="wp_cache" value="${isotoma.cachedir}/wordpress-${wordpress.version}.tar.gz" />
 	<property name="wp_src" value="${isotoma.tmpdir}/wordpress" />
 	<property name="wp_dest" value="${application.startdir}/parts/wordpress"/>
 
@@ -55,7 +55,7 @@
                     </or>
                     <then>
                         <!-- Cache doesn't exist, go get the tar -->
-			<httpget url="http://wordpress.org/wordpress-${wordpress.version}.tar.gz" dir="${cache}"/>
+			<httpget url="http://wordpress.org/wordpress-${wordpress.version}.tar.gz" dir="${isotoma.cachedir}"/>
 		    </then>
 		    <else>
 			<echo>Using ${wp_cache}</echo>
@@ -90,7 +90,12 @@
                 <propertyprompt propertyName="wordpress.site.admin_email" defaultValue=""
                     useExistingValue="true" promptText="Wordpress admin email address" />
 
-                <exec command="${application.startdir}/bin/wordpress_init_db install" logoutput="true"/>
+		<if>
+		    <istrue value="${wordpress.init}"/>
+		    <then>
+			<exec command="${application.startdir}/bin/wordpress_init_db install" logoutput="true"/>
+		    </then>
+		</if>
 	    </then>
 	    <else>
                 <echo>Wordpress v${wordpress.version} already installed at ${wp_dest}, skipping..</echo>
@@ -98,7 +103,7 @@
 	</if>
 
         <copy todir="${wp_dest}" overwrite="true" includeemptydirs="true">
-            <fileset dir="${application.startdir}/src/4th-estate/wordpress">
+            <fileset dir="${isotoma.srcdir}/wordpress">
                 <include name="**/*" />
                 <exclude name="**/wp-config.php"/>
             </fileset>
@@ -113,7 +118,8 @@
         <property name="plugin_name" value="${wordpress.${plugin_shortname}.name}" override="true"/>
         <property name="plugin_version" value="${wordpress.${plugin_shortname}.version}" override="true"/>
         <property name="plugin_enabled" value="${wordpress.${plugin_shortname}.enabled}" override="true"/>
-        <property name="plugin_cache" value="${cache}/${plugin_name}.${plugin_version}.zip" override="true"/>
+        <property name="plugin_init" value="${wordpress.${plugin_shortname}.init}" override="true"/>
+        <property name="plugin_cache" value="${isotoma.cachedir}/${plugin_name}.${plugin_version}.zip" override="true"/>
         <property name="plugin_src" value="${isotoma.tmpdir}/${plugin_name}" override="true"/>
         <property name="plugin_dest" value="${wp_dest}/wp-content/plugins/${plugin_name}" override="true"/>
 
@@ -157,7 +163,7 @@
                         </or>
                         <then>
                             <!-- Cache doesn't exist, go get the tar -->
-                            <httpget url="http://downloads.wordpress.org/plugin/${plugin_name}.${plugin_version}.zip" dir="${plugin_cache}"/>
+                            <httpget url="http://downloads.wordpress.org/plugin/${plugin_name}.${plugin_version}.zip" dir="${isotoma.cachedir}"/>
                         </then>
                         <else>
                             <echo>Using ${plugin_cache}</echo>
@@ -176,8 +182,13 @@
 		    <echo file="${isotoma.vardir}/wordpress.plugin.versions" append="true">wordpress.${plugin_shortname}.installed_version=${plugin_version}
 </echo>
 
-                    <!-- Activate the plugin in Wordpress -->
-                    <exec command="${application.startdir}/bin/wordpress_init_db init_plugin ${plugin_name}" logoutput="true"/>
+		    <!-- Activate the plugin in Wordpress -->
+		    <if>
+			<istrue value="${plugin_init}"/>
+			<then>
+			    <exec command="${application.startdir}/bin/wordpress_init_db init_plugin ${plugin_name}" logoutput="true"/>
+			</then>
+		    </if>
                 </then>
             </elseif>
             <else>

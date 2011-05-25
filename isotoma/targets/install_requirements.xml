@@ -21,17 +21,16 @@ versioining, gzipped tars and zips. -->
         <property name="req_name" value="${isotoma.requirements.${req_shortname}.name}" override="true"/>
         <property name="req_version" value="${isotoma.requirements.${req_shortname}.version}" override="true"/>
         <property name="req_url" value="${isotoma.requirements.${req_shortname}.url}" override="true"/>
-	<property name="req_enabled" value="${isotoma.requirements.${req_shortname}.enabled}" override="true"/>
 	
 	<property name="req_includename" value="${isotoma.requirements.${req_shortname}.includename}" override="true" />
-	<property name="req_iszip" value="${isotoma.requirements.${req_shortname}.iszip" override="true" />
+	<property name="req_iszip" value="${isotoma.requirements.${req_shortname}.iszip}" override="true" />
 	<if>
-	    <istrue value="${req_iszip}" />
+	    <isfalse value="${req_iszip}"/>
 	    <then>
-		<property name="req_ext" value="zip" override="true" />
+		<property name="req_ext" value="tgz" override="true" />
 	    </then>
 	    <else>
-		<property name="req_ext" value="tgz" override="true" />
+		<property name="req_ext" value="zip" override="true" />
 	    </else>
 	</if>
 
@@ -79,17 +78,17 @@ versioining, gzipped tars and zips. -->
                         </else>
 		    </if>
 		    <if>
-			<istrue value="${req_iszip}" />
+			<isfalse value="${req_iszip}" />
 			<then>
-			    <unzip file="${req_cache}" todir="${isotoma.partsdir}" />
+			    <untar file="${req_cache}" todir="${isotoma.partsdir}" />
 			</then>
 			<else>
-			    <untar file="${req_cache}" todir="${isotoma.partsdir}" />
+			    <unzip file="${req_cache}" todir="${isotoma.partsdir}" />
 			</else>
 		    </if>
 
                     <!-- Write the installed version out to a property file -->
-		    <echo file="${isotoma.vardir}/isotoma.requirements.versions" append="true">isotoma.requirements.${req_shortname}.installed_version=${req_version}
+		    <echo file="${isotoma.vardir}/requirements.versions" append="true">isotoma.requirements.${req_shortname}.installed_version=${req_version}
 </echo>
                 </then>
             </elseif>

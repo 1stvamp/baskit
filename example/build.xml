@@ -4,7 +4,6 @@
     <property file="test.properties" override="no"/>
     <taskdef name="pearinstall" classname="isotoma.tasks.PearInstallTask" />
     <target name="build">
-	<echo>P: ${isotoma.partsdir}, S: ${isotoma.srcdir}</echo>
 	<!-- PEAR requirements -->
 	<!-- No version, will get latest -->
 	<pearinstall name="MDB2" />

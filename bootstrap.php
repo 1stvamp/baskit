@@ -73,7 +73,7 @@ $paths = implode(PATH_SEPARATOR, array(
 ));
 file_put_contents(
     "${parts}pear/php/phing_wrapper.php",
-    "#!/usr/bin/env php\n<?php\nset_include_path('${paths}'.PATH_SEPARATOR.get_include_path());\ninclude '${parts}pear/php/phing.php';"
+    "#!/usr/bin/env php\n<?php\nset_include_path('${paths}');\ninclude '${parts}pear/php/phing.php';"
 );
 echo 'Created bin/phing' . PHP_EOL;
 

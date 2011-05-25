@@ -8,8 +8,7 @@
 	<!-- Older version -->
 	<pearinstall name="HTML_QuickForm2" version="0.4.0"/>
 	<!-- Custom PEAR channel -->
-	<pearinstall channel="pear.eveyron.com"/>
-	<pearinstall name="eveyron/Eveyron"/>
+	<pearinstall name="eveyron/Eveyron" channel="pear.eveyron.com"/>
 
 	<!-- Install non-PEAR requirements -->
         <phing phingfile="isotoma/targets/install_requirements.xml" inheritRefs="true" target="install"/>

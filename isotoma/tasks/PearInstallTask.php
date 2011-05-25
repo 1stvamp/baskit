@@ -108,8 +108,6 @@ class PearInstallTask extends Task {
 	    $this->installChannel($this->channel);
 	    if (!$name) {
 		return;
-	    } else {
-		$name = $this->channel . '/' . $name;
 	    }
         }
 

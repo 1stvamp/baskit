@@ -68,7 +68,6 @@ $phing_bin = str_replace('phing.php', 'phing_wrapper.php', $phing_bin);
 file_put_contents("${bin}phing", $phing_bin);
 chmod("${bin}phing", 0755);
 $paths = implode(PATH_SEPARATOR, array(
-    $cwd,
     $parts,
     "${parts}pear/php",
 ));

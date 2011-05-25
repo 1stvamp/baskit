@@ -1,7 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Phing target for installing Wordpress and Wordpress plugins, supports versioning and caching. -->
 <project name="isotoma.targets.wordpress" default="install">
+    <taskdef name="pearinstall" classname="isotoma.tasks.PearInstallTask" />
     <target name="install">
+	<!-- We'll need these -->
+	<pearinstall name="Net_URL2" version="0.3.1"/>
+	<pearinstall name="HTTP_Request2" version="2.0.0beta3"/>
+
         <!-- If isotoma.tmpdir isn't set, use the system temp (normally /tmp) -->
         <php returnProperty="sys_tmp" function="sys_get_temp_dir" />
         <property name="isotoma.tmpdir" value="${sys_tmp}" override="no"/>

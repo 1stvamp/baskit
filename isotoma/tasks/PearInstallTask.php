@@ -69,7 +69,7 @@ class PearInstallTask extends Task {
             $this->log(implode(PHP_EOL, $output) . PHP_EOL);
             throw new BuildException('Unable to check PEAR channels.');
 	}
-        if (preg_match('\b' . preg_quote($channel) . '\b', implode("\n", $output)) == 0) {
+        if (preg_match('/\b' . preg_quote($channel) . '\b/', implode("\n", $output)) == 0) {
             exec("${cwd}/bin/pear channel-discover ${channel} 2>&1", $output, $ret);
 	    $this->log(implode(PHP_EOL, $output) . PHP_EOL);
 	    if ($ret > 0) {
@@ -96,7 +96,7 @@ class PearInstallTask extends Task {
      */
     public function main() {
         $name = $this->name;
-        if (!$name) {
+        if (!$name && $this->channel === null) {
             throw new BuildException('Package name is required.');
         }
 
@@ -105,7 +105,12 @@ class PearInstallTask extends Task {
         }
 
         if ($this->channel !== null) {
-            $this->installChannel($this->channel);
+	    $this->installChannel($this->channel);
+	    if (!$name) {
+		return;
+	    } else {
+		$name = $this->channel . '/' . $name;
+	    }
         }
 
         $cwd = $this->getCwd();

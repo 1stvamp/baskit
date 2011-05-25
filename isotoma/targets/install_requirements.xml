@@ -20,7 +20,7 @@ versioining, gzipped tars and zips. -->
 	
 	<property name="req_iszip" value="${isotoma.requirements.${req_shortname}.iszip" override="true" />
 	<if>
-	    <istrue "req_iszip" />
+	    <istrue value="${req_iszip}" />
 	    <then>
 		<property name="req_ext" value="zip" override="true" />
 	    </then>

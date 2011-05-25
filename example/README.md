@@ -11,7 +11,7 @@ To bootstrap the build environment and build the project:
     
     # Let's symlink the isotoma directory which contains common baskit tasks and targets
     # you could also cp this in, but I'm avoiding the clutter for the example project.
-    ln -s ./isotoma ../isotoma
+    ln -s ../isotoma ./isotoma
 
     # Build the project with Phing
     bin/phing

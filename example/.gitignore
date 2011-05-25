@@ -2,4 +2,5 @@ isotoma
 bin
 parts
 var
+cache
 .pearrc

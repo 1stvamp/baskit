@@ -23,14 +23,15 @@ versioining, gzipped tars and zips. -->
         <property name="req_url" value="${isotoma.requirements.${req_shortname}.url}" override="true"/>
 	
 	<property name="req_includename" value="${isotoma.requirements.${req_shortname}.includename}" override="true" />
+	<property name="req_removepath" value="${isotoma.requirements.${req_shortname}.removepath}" override="true" />
 	<property name="req_iszip" value="${isotoma.requirements.${req_shortname}.iszip}" override="true" />
 	<if>
-	    <isfalse value="${req_iszip}"/>
+	    <istrue value="${req_iszip}"/>
 	    <then>
-		<property name="req_ext" value="tgz" override="true" />
+		<property name="req_ext" value="zip" override="true" />
 	    </then>
 	    <else>
-		<property name="req_ext" value="zip" override="true" />
+		<property name="req_ext" value="tgz" override="true" />
 	    </else>
 	</if>
 
@@ -58,7 +59,6 @@ versioining, gzipped tars and zips. -->
                 </or>
                 <then>
                     <echo>Non-PEAR requirement '${req_name}' v${req_version} required, installing..</echo>
-                    <mkdir dir="${req_dest}" />
 
                     <!-- Try to use the cache if it exists -->
                     <available file="${req_cache}" property="req_cache_exists" type="file"/>
@@ -78,12 +78,12 @@ versioining, gzipped tars and zips. -->
                         </else>
 		    </if>
 		    <if>
-			<isfalse value="${req_iszip}" />
+			<istrue value="${req_iszip}" />
 			<then>
-			    <untar file="${req_cache}" todir="${isotoma.partsdir}" />
+			    <unzip file="${req_cache}" todir="${isotoma.partsdir}" />
 			</then>
 			<else>
-			    <unzip file="${req_cache}" todir="${isotoma.partsdir}" />
+			    <untar file="${req_cache}" todir="${req_dest}" removepath="${req_removepath}" />
 			</else>
 		    </if>
 

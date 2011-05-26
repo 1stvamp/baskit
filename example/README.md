@@ -29,7 +29,7 @@ This example build doesn't perform any database migrations and it doesn't initia
 you have in place when trying out this example project.
 
 Some example migrations are included in `./migrations` but are never run, to run these you would first make
-sure the commented out database settings in `build.properties` are uncommented and correct, and then use
+sure the database settings in `build.properties` (_baskit.database.*_) are correct, and then use
 the following Phing target call in `build.xml`:
 
     <!-- Run DB migrations -->

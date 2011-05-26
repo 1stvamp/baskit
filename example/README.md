@@ -1,8 +1,8 @@
 _Baskit_ Example Project
-------------------------
+========================
 
 Getting started
-===============
+---------------
 To bootstrap the build environment and build the project:
 
     # Assuming we're inside the baskit base directory
@@ -22,6 +22,8 @@ To bootstrap the build environment and build the project:
 
     $EDITOR build.xml build.properties # Take a look for your self
 
+Migrations
+----------
 This example build doesn't perform any database migrations and it doesn't initialise Wordpress when it installs it to `./parts`
 (which is done by calling the Wordpress installation scripts), this is because we obviously can't know what database setup
 you have in place when trying out this example project.

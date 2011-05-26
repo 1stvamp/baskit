@@ -16,7 +16,7 @@ The requirements for _baskit_ are:
  * A Unix shell like bash or zsh (in the future it should be easy to support others, like CMD or PowerShell on Windows)
 
 Using Git submodules
-====================
+~~~~~~~~~~~~~~~~~~~~
 
     git submodule add https://github.com/isotoma/baskit.git baskit
     git commit -m 'Added baskit'
@@ -32,7 +32,7 @@ When you come to bootstrap your environment you would reference `bootstrap.php` 
 e.g. in your project base you would run `php baskit/bootstrap.php`.
 
 Using Subversion externals
-==========================
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
    svn propedit svn:externals .
    # Add: baskit https://svn.github.com/isotoma/baskit.git
@@ -44,10 +44,10 @@ Using Subversion externals
 branches or tags, so using this you'd be stuck with whatever is at `HEAD`.
 
 Using PEAR
-==========
+~~~~~~~~~~
 
 Using the phar installer
-========================
+~~~~~~~~~~~~~~~~~~~~~~~~
 
 Usage
 -----
@@ -70,13 +70,13 @@ And a `./parts` directory containing PEAR itself:
 To make building your project and installing dependencies easier and more maintainable, _baskit_ includes some Phing tasks and targets:
 
 Phing Tasks
-===========
+~~~~~~~~~~~
 
  * **PearInstallTask** - A Phing task to install a depenedency into the local PEAR sandbox, also supports installing custom PEAR channels.
  * **PhpMigrateTask** - A version of the core Phing **DbDeployTask** that allows running migrations written in PHP rather than SQL, you can use this yourself or use the pre-written `migrations.xml` target (see *Phing Targets*).
 
 Phing Targets
-=============
+~~~~~~~~~~~~~
 
  * **install_requirements.xml** - Installs a list of non-PEAR dependencies from web URLs, with version checking, caching and support for zips and gzipped tars.
  * **migrations.xml** - Target for deploying all undeployed SQL and PHP database migrations (currently missing "undo" target for reverting to previous migration)..

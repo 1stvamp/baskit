@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="baskit-example-project" default="build">
     <property file="build.properties"/>
-    <taskdef name="pearinstall" classname="isotoma.tasks.PearInstallTask" />
+    <taskdef name="pearinstall" classname="baskit.phing.tasks.PearInstallTask" />
     <target name="build">
 	<!-- PEAR requirements -->
 	<!-- No version, will get latest -->
@@ -12,12 +12,12 @@
 	<pearinstall name="eveyron/Eveyron" channel="pear.eveyron.com"/>
 
 	<!-- Install non-PEAR requirements -->
-        <phing phingfile="isotoma/targets/install_requirements.xml" inheritRefs="true" target="install"/>
+	<phing phingfile="baskit/phing/targets/install_requirements.xml" inheritRefs="true" target="install"/>
 
 	<!-- Install Wordpress -->
-        <phing phingfile="isotoma/targets/wordpress.xml" inheritRefs="true" target="install"/>
+	<phing phingfile="baskit/phing/targets/wordpress.xml" inheritRefs="true" target="install"/>
 
 	<!-- Create an apache config -->
-	<phing phingfile="isotoma/targets/apache.xml" inheritRefs="true" target="build_conf"/>
+	<phing phingfile="baskit/phing/targets/apache.xml" inheritRefs="true" target="build_conf"/>
     </target>
 </project>

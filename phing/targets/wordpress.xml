@@ -1,25 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Phing target for installing Wordpress and Wordpress plugins, supports versioning and caching. -->
-<project name="isotoma.targets.wordpress" default="install">
-    <property file="isotoma/base.properties" override="no"/>
-    <taskdef name="pearinstall" classname="isotoma.tasks.PearInstallTask" />
+<project name="baskit.phing.targets.wordpress" default="install">
+    <property file="baskit/phing/base.properties" override="no"/>
+    <taskdef name="pearinstall" classname="baskit.phing.tasks.PearInstallTask" />
     <!-- We'll need these -->
     <pearinstall name="Net_URL2" version="0.3.1"/>
     <pearinstall name="HTTP_Request2" version="2.0.0beta3"/>
-    <phing phingfile="isotoma/targets/cache_dir.xml" inheritRefs="true" target="make_cache_dir"/>
     <target name="install">
-        <!-- If isotoma.tmpdir isn't set, use the system temp (normally /tmp) -->
+        <!-- If baskit.tmpdir isn't set, use the system temp (normally /tmp) -->
         <php returnProperty="sys_tmp" function="sys_get_temp_dir" />
-        <property name="isotoma.tmpdir" value="${sys_tmp}" override="no"/>
-        <property name="isotoma.wordpress.freshbuild" value="false" />
+        <property name="baskit.tmpdir" value="${sys_tmp}" override="no"/>
+        <property name="baskit.wordpress.freshbuild" value="false" />
 
-	<property name="wp_cache" value="${isotoma.cachedir}/wordpress-${wordpress.version}.tar.gz" />
-	<property name="wp_src" value="${isotoma.tmpdir}/wordpress" />
+	<property name="wp_cache" value="${baskit.cachedir}/wordpress-${wordpress.version}.tar.gz" />
+	<property name="wp_src" value="${baskit.tmpdir}/wordpress" />
 	<property name="wp_dest" value="${application.startdir}/parts/wordpress"/>
 
 	<available file="${wp_dest}" property="wp_dest_exists" type="dir"/>
 
-	<copy file="${application.startdir}/isotoma/targets/scripts/wordpress_init_db"
+	<copy file="${application.startdir}/baskit/phing/targets/scripts/wordpress_init_db"
 	    todir="${application.startdir}/bin" overwrite="true">
 	    <filterchain>
 		<expandproperties />
@@ -28,7 +27,7 @@
 	<chmod file="${application.startdir}/bin/wordpress_init_db" mode="0755" />
 
         <!-- Check if we have the correct wordpress version installed -->
-        <property file="${isotoma.vardir}/wordpress.version"/>
+        <property file="${baskit.vardir}/wordpress.version"/>
 	<if>
             <or>
                 <not>
@@ -42,7 +41,7 @@
             <then>
                 <echo>Wordpress v${wordpress.version} required, installing..</echo>
 		<mkdir dir="${wp_dest}" />
-                <property name="isotoma.wordpress.freshbuild" value="true" override="yes" />
+                <property name="wordpress.freshbuild" value="true" override="yes" />
 
                 <!-- Try to use the cache if it exists -->
 		<available file="${wp_cache}" property="wp_cache_exists" type="file"/>
@@ -55,13 +54,13 @@
                     </or>
                     <then>
                         <!-- Cache doesn't exist, go get the tar -->
-			<httpget url="http://wordpress.org/wordpress-${wordpress.version}.tar.gz" dir="${isotoma.cachedir}"/>
+			<httpget url="http://wordpress.org/wordpress-${wordpress.version}.tar.gz" dir="${baskit.cachedir}"/>
 		    </then>
 		    <else>
 			<echo>Using ${wp_cache}</echo>
 		    </else>
 		</if>
-		<untar file="${wp_cache}" todir="${isotoma.tmpdir}" />
+		<untar file="${wp_cache}" todir="${baskit.tmpdir}" />
 
                 <!-- Copy over all the new wordpress files -->
 		<copy todir="${wp_dest}" overwrite="true" includeemptydirs="true">
@@ -71,7 +70,7 @@
 		</copy>
 
                 <!-- Generate wordpress config, replacing variables with properties -->
-                <copy file="${isotoma.srcdir}/wordpress/wp-config.php" todir="${wp_dest}" overwrite="true">
+                <copy file="${baskit.srcdir}/wordpress/wp-config.php" todir="${wp_dest}" overwrite="true">
                     <filterchain>
                         <expandproperties />
                     </filterchain>
@@ -80,7 +79,7 @@
 
 		<delete dir="${wp_src}" includeemptydirs="true" failonerror="true" />
                 <!-- Write the installed version out to a property file -->
-                <echo file="${isotoma.vardir}/wordpress.version" append="false">wordpress.installed_version=${wordpress.version}</echo>
+                <echo file="${baskit.vardir}/wordpress.version" append="false">wordpress.installed_version=${wordpress.version}</echo>
 
                 <!-- Install Wordpress DB config -->
                 <propertyprompt propertyName="wordpress.site.admin_username" defaultValue=""
@@ -103,14 +102,14 @@
 	</if>
 
         <copy todir="${wp_dest}" overwrite="true" includeemptydirs="true">
-            <fileset dir="${isotoma.srcdir}/wordpress">
+            <fileset dir="${baskit.srcdir}/wordpress">
                 <include name="**/*" />
                 <exclude name="**/wp-config.php"/>
             </fileset>
         </copy>
-        <echo>Copied Wordpress customisations from ${isotoma.srcdir}/wordpress</echo>
+        <echo>Copied Wordpress customisations from ${baskit.srcdir}/wordpress</echo>
 
-        <property file="${isotoma.vardir}/wordpress.plugin.versions"/>
+        <property file="${baskit.vardir}/wordpress.plugin.versions"/>
         <foreach list="${wordpress.plugins}" param="plugin_shortname" target="install_plugin" delimiter=","/>
     </target>
 
@@ -119,8 +118,8 @@
         <property name="plugin_version" value="${wordpress.${plugin_shortname}.version}" override="true"/>
         <property name="plugin_enabled" value="${wordpress.${plugin_shortname}.enabled}" override="true"/>
         <property name="plugin_init" value="${wordpress.${plugin_shortname}.init}" override="true"/>
-        <property name="plugin_cache" value="${isotoma.cachedir}/${plugin_name}.${plugin_version}.zip" override="true"/>
-        <property name="plugin_src" value="${isotoma.tmpdir}/${plugin_name}" override="true"/>
+        <property name="plugin_cache" value="${baskit.cachedir}/${plugin_name}.${plugin_version}.zip" override="true"/>
+        <property name="plugin_src" value="${baskit.tmpdir}/${plugin_name}" override="true"/>
         <property name="plugin_dest" value="${wp_dest}/wp-content/plugins/${plugin_name}" override="true"/>
 
         <available file="${plugin_dest}" property="plugin_dest_exists" type="dir"/>
@@ -163,13 +162,13 @@
                         </or>
                         <then>
                             <!-- Cache doesn't exist, go get the tar -->
-                            <httpget url="http://downloads.wordpress.org/plugin/${plugin_name}.${plugin_version}.zip" dir="${isotoma.cachedir}"/>
+                            <httpget url="http://downloads.wordpress.org/plugin/${plugin_name}.${plugin_version}.zip" dir="${baskit.cachedir}"/>
                         </then>
                         <else>
                             <echo>Using ${plugin_cache}</echo>
                         </else>
                     </if>
-                    <unzip file="${plugin_cache}" todir="${isotoma.tmpdir}" />
+                    <unzip file="${plugin_cache}" todir="${baskit.tmpdir}" />
 
                     <!-- Copy over all the new plugin files -->
                     <copy todir="${plugin_dest}" overwrite="true" includeemptydirs="true">
@@ -179,7 +178,7 @@
                     </copy>
 
                     <!-- Write the installed version out to a property file -->
-		    <echo file="${isotoma.vardir}/wordpress.plugin.versions" append="true">wordpress.${plugin_shortname}.installed_version=${plugin_version}
+		    <echo file="${baskit.vardir}/wordpress.plugin.versions" append="true">wordpress.${plugin_shortname}.installed_version=${plugin_version}
 </echo>
 
 		    <!-- Activate the plugin in Wordpress -->

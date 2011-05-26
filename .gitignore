@@ -2,4 +2,4 @@
 bin
 parts
 var
-cache
+download_cache

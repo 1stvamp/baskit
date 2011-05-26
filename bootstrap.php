@@ -15,6 +15,7 @@ $home = getenv('HOME') . '/';
 $cwd = getcwd() . '/';
 $parts = $cwd . 'parts/';
 $bin = $cwd . 'bin/';
+$cache = $cwd . 'download_cache/';
 
 // Create dynamic paths for environment
 if (!file_exists($parts)) {
@@ -24,6 +25,10 @@ if (!file_exists($parts)) {
 if (!file_exists($bin)) {
         mkdir($bin);
         echo "Created ${bin}" . PHP_EOL;
+}
+if (!file_exists($cache)) {
+        mkdir($cache);
+        echo "Created ${cache}" . PHP_EOL;
 }
 
 // Move any existing ~/.pearrc out of the way, temporarily
@@ -83,6 +88,10 @@ file_put_contents(
 );
 chmod("${bin}php", 0755);
 echo 'Created bin/php' . PHP_EOL;
+
+$baskit_dir = realpath(dirname(__FILE__));
+symlink($baskit_dir, "${cwd}baskit");
+echo 'Symlinked ./baskit to ' . $baskit_dir . PHP_EOL;
 
 echo 'Done.' . PHP_EOL;
 exit(0);

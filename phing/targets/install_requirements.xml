@@ -1,30 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Phing target for installing non-PEARable requirements from the web, supports caching,
 versioining, gzipped tars and zips. -->
-<project name="isotoma.targets.install_requirements" default="install">
-    <property file="isotoma/base.properties" override="no"/>
-    <taskdef name="pearinstall" classname="isotoma.tasks.PearInstallTask" />
+<project name="baskit.phing.targets.install_requirements" default="install">
+    <property file="baskit/phing/base.properties" override="no"/>
+    <taskdef name="pearinstall" classname="baskit.phing.tasks.PearInstallTask" />
     <!-- We'll need these -->
     <pearinstall name="Net_URL2" version="0.3.1"/>
     <pearinstall name="HTTP_Request2" version="2.0.0beta3"/>
-    <phing phingfile="isotoma/targets/cache_dir.xml" inheritRefs="true" target="make_cache_dir"/>
     <target name="install">
-        <!-- If isotoma.tmpdir isn't set, use the system temp (normally /tmp) -->
+        <!-- If baskit.tmpdir isn't set, use the system temp (normally /tmp) -->
         <php returnProperty="sys_tmp" function="sys_get_temp_dir" />
-        <property name="isotoma.tmpdir" value="${sys_tmp}" override="no"/>
+        <property name="baskit.tmpdir" value="${sys_tmp}" override="no"/>
 
-        <property file="${isotoma.vardir}/requirements.versions"/>
-        <foreach list="${isotoma.requirements}" param="req_shortname" target="install_req" delimiter=","/>
+        <property file="${baskit.vardir}/requirements.versions"/>
+        <foreach list="${baskit.requirements}" param="req_shortname" target="install_req" delimiter=","/>
     </target>
 
     <target name="install_req">
-        <property name="req_name" value="${isotoma.requirements.${req_shortname}.name}" override="true"/>
-        <property name="req_version" value="${isotoma.requirements.${req_shortname}.version}" override="true"/>
-        <property name="req_url" value="${isotoma.requirements.${req_shortname}.url}" override="true"/>
+        <property name="req_name" value="${baskit.requirements.${req_shortname}.name}" override="true"/>
+        <property name="req_version" value="${baskit.requirements.${req_shortname}.version}" override="true"/>
+        <property name="req_url" value="${baskit.requirements.${req_shortname}.url}" override="true"/>
 	
-	<property name="req_includename" value="${isotoma.requirements.${req_shortname}.includename}" override="true" />
-	<property name="req_removepath" value="${isotoma.requirements.${req_shortname}.removepath}" override="true" />
-	<property name="req_iszip" value="${isotoma.requirements.${req_shortname}.iszip}" override="true" />
+	<property name="req_includename" value="${baskit.requirements.${req_shortname}.includename}" override="true" />
+	<property name="req_removepath" value="${baskit.requirements.${req_shortname}.removepath}" override="true" />
+	<property name="req_iszip" value="${baskit.requirements.${req_shortname}.iszip}" override="true" />
 	<if>
 	    <istrue value="${req_iszip}"/>
 	    <then>
@@ -35,9 +34,9 @@ versioining, gzipped tars and zips. -->
 	    </else>
 	</if>
 
-	<property name="req_cache" value="${isotoma.cachedir}/${req_includename}.${req_version}.${req_ext}" override="true"/>
-        <property name="req_src" value="${isotoma.tmpdir}/${req_name}" override="true"/>
-	<property name="req_dest" value="${isotoma.partsdir}/${req_includename}" override="true"/>
+	<property name="req_cache" value="${baskit.cachedir}/${req_includename}.${req_version}.${req_ext}" override="true"/>
+        <property name="req_src" value="${baskit.tmpdir}/${req_name}" override="true"/>
+	<property name="req_dest" value="${baskit.partsdir}/${req_includename}" override="true"/>
 
         <available file="${req_dest}" property="req_dest_exists" type="dir"/>
 
@@ -50,7 +49,7 @@ versioining, gzipped tars and zips. -->
                 <!-- Check if we have the correct version installed -->
                 <or>
                     <not>
-                        <equals arg1="${isotoma.requirements.${req_shortname}.installed_version}" arg2="${req_version}" />
+                        <equals arg1="${baskit.requirements.${req_shortname}.installed_version}" arg2="${req_version}" />
                     </not>
                     <not>
                         <isset property="req_dest_exists"/>
@@ -71,7 +70,7 @@ versioining, gzipped tars and zips. -->
                         </or>
                         <then>
                             <!-- Cache doesn't exist, go get the tar -->
-                            <httpget url="${req_url}" dir="${isotoma.cachedir}" filename="${req_includename}.${req_version}.${req_ext}"/>
+                            <httpget url="${req_url}" dir="${baskit.cachedir}" filename="${req_includename}.${req_version}.${req_ext}"/>
                         </then>
                         <else>
                             <echo>Using ${req_cache}</echo>
@@ -80,7 +79,7 @@ versioining, gzipped tars and zips. -->
 		    <if>
 			<istrue value="${req_iszip}" />
 			<then>
-			    <unzip file="${req_cache}" todir="${isotoma.partsdir}" />
+			    <unzip file="${req_cache}" todir="${baskit.partsdir}" />
 			</then>
 			<else>
 			    <untar file="${req_cache}" todir="${req_dest}" removepath="${req_removepath}" />
@@ -88,7 +87,7 @@ versioining, gzipped tars and zips. -->
 		    </if>
 
                     <!-- Write the installed version out to a property file -->
-		    <echo file="${isotoma.vardir}/requirements.versions" append="true">isotoma.requirements.${req_shortname}.installed_version=${req_version}
+		    <echo file="${baskit.vardir}/requirements.versions" append="true">baskit.requirements.${req_shortname}.installed_version=${req_version}
 </echo>
                 </then>
             </elseif>

@@ -1,0 +1,95 @@
+<?xml version="1.0" ?>
+<project name="baskit.phing.targets.migrations" default="migrate">
+    <property file="baskit/phing/base.properties" override="no"/>
+    <!-- Sets the DSTAMP, TSTAMP and TODAY properties -->
+    <tstamp/>
+    <property name="baskit.migrations.mysqlbin" value="mysql" override="false"/>
+    <property name="baskit.migrations.sql.deployfile"
+        value="${baskit.vardir}/db_scripts/deploy-${DSTAMP}${TSTAMP}.sql" override="false"/>
+    <property name="baskit.migrations.sql.undofile"
+        value="${baskit.vardir}/db_scripts/undo-${DSTAMP}${TSTAMP}.sql" override="false"/>
+    <property name="baskit.migrations.php.deployfile"
+        value="${baskit.vardir}/db_scripts/deploy-${DSTAMP}${TSTAMP}.php" override="false"/>
+    <property name="baskit.migrations.php.undofile"
+        value="${baskit.vardir}/db_scripts/undo-${DSTAMP}${TSTAMP}.php" override="false"/>
+
+    <!-- Create our migration task -->
+    <target name="migrate" description="Database Migrations">
+        <echo>Running DB migrations..</echo>
+
+        <mkdir dir="${baskit.vardir}/db_scripts"/>
+
+        <!-- Make sure we have the migrations table -->
+	<copy file="${application.startdir}/baskit/phing/targets/scripts/create_migrations_table"
+            todir="${application.startdir}/bin" overwrite="true">
+            <filterchain>
+                <expandproperties/>
+            </filterchain>
+        </copy>
+        <chmod file="${application.startdir}/bin/create_migrations_table" mode="0755"/>
+        <exec command="${application.startdir}/bin/create_migrations_table" logoutput="true"/>
+
+        <!-- Load the tasks -->
+        <taskdef name="dbdeploy" classname="phing.tasks.ext.dbdeploy.DbDeployTask"/>
+        <taskdef name="phpmigrate" classname="baskit.phing.tasks.PhpMigrateTask"/>
+
+        <!-- Generate the deployment scripts -->
+        <dbdeploy
+            url="mysql:host=${baskit.db.host};dbname=${baskit.db.database}"
+            userid="${baskit.db.username}"
+            password="${baskit.db.password}"
+	    dir="${application.startdir}/migrations/sql"
+            outputfile="${baskit.migrations.sql.deployfile}"
+            undooutputfile="${baskit.migrations.sql.undofile}" />
+
+        <filesize file="${baskit.migrations.sql.deployfile}" propertyName="sql_deployfile_size"/>
+        <if>
+            <equals arg1="${sql_deployfile_size}" arg2="0"/>
+            <then>
+                <echo>No SQL changes to apply, skipping..</echo>
+                <delete file="${baskit.migrations.sql.deployfile}" quiet="true"/>
+                <delete file="${baskit.migrations.sql.undofile}" quiet="true"/>
+            </then>
+            <else>
+                <!-- Execute the SQL - Use mysql command line to avoid trouble with large files or many statements and PDO -->
+                <echo>Applying SQL DB changes..</echo>
+                <exec
+                    command="${baskit.migrations.mysqlbin} -h${baskit.db.host} -u${baskit.db.username} -p${baskit.db.password} ${baskit.db.database} &lt; ${baskit.migrations.sql.deployfile}"
+                    dir="${application.startdir}"
+                    checkreturn="true"
+                    logoutput="true"/>
+            </else>
+        </if>
+
+        <phpmigrate
+            url="mysql:host=${baskit.db.host};dbname=${baskit.db.database}"
+            userid="${baskit.db.username}"
+            password="${baskit.db.password}"
+	    dir="${application.startdir}/migrations/php"
+            outputfile="${baskit.migrations.php.deployfile}"
+            undooutputfile="${baskit.migrations.php.undofile}" />
+
+        <filesize file="${baskit.migrations.php.deployfile}.sql" propertyName="php_deployfile_size"/>
+        <if>
+            <equals arg1="${php_deployfile_size}" arg2="0"/>
+            <then>
+                <echo>No PHP changes to apply, skipping..</echo>
+                <delete file="${baskit.migrations.php.deployfile}" quiet="true"/>
+                <delete file="${baskit.migrations.php.deployfile}.sql" quiet="true"/>
+            </then>
+            <else>
+                <echo>Applying PHP DB changes..</echo>
+		<chmod file="${baskit.migrations.php.deployfile}" mode="0755"/>
+                <exec
+		    command="${baskit.migrations.php.deployfile} migrate"
+                    checkreturn="true"
+                    logoutput="true"/>
+                <exec
+                    command="${baskit.migrations.mysqlbin} -h${baskit.db.host} -u${baskit.db.username} -p${baskit.db.password} ${baskit.db.database} &lt; ${baskit.migrations.php.deployfile}.sql"
+                    dir="${application.startdir}"
+                    checkreturn="true"
+                    logoutput="true"/>
+            </else>
+        </if>
+    </target>
+</project>

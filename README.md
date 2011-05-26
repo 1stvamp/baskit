@@ -32,11 +32,11 @@ e.g. in your project base you would run `php baskit/bootstrap.php`.
 
 ### Using Subversion externals
 
-   svn propedit svn:externals .
-   # Add: baskit https://svn.github.com/isotoma/baskit.git
-   # to your externals
-   svn ci -m 'Added baskit'
-   svn up
+    svn propedit svn:externals .
+    # Add: baskit https://svn.github.com/isotoma/baskit.git
+    # to your externals
+    svn ci -m 'Added baskit'
+    svn up
 
 *Caveat emptor*: Because this is a checkout from Github's SVN mirroring service, there is no support for pinning to
 branches or tags, so using this you'd be stuck with whatever is at `HEAD`.

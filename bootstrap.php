@@ -90,8 +90,10 @@ chmod("${bin}php", 0755);
 echo 'Created bin/php' . PHP_EOL;
 
 $baskit_dir = realpath(dirname(__FILE__));
-symlink($baskit_dir, "${cwd}baskit");
-echo 'Symlinked ./baskit to ' . $baskit_dir . PHP_EOL;
+if (!file_exists($baskit_dir)) {
+    symlink($baskit_dir, "${cwd}baskit");
+    echo 'Symlinked ./baskit to ' . $baskit_dir . PHP_EOL;
+}
 
 echo 'Done.' . PHP_EOL;
 exit(0);

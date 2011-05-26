@@ -49,7 +49,8 @@ class PhpMigrateTask extends DbDeployTask {
 		);
 		$output = array(
 		    '#!/usr/bin/env php',
-		    '<?php'
+		    '<?php',
+		    'set_include_path("' . get_include_path() . '");',
 		);
 		foreach($files as $fileChangeNumber => $fileName) {
 		    // Load file content

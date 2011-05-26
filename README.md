@@ -41,6 +41,12 @@ e.g. in your project base you would run `php baskit/bootstrap.php`.
 *Caveat emptor*: Because this is a checkout from Github's SVN mirroring service, there is no support for pinning to
 branches or tags, so using this you'd be stuck with whatever is at `HEAD`.
 
+You *can* pin the external to a specific comit in the Github virtual SVN repo, e.g.:
+
+    baskit -r100 https://svn.github.com/isotoma/baskit.git
+
+However you'll have to work out which commit to pin to yourself as it would be very difficult to update this document every release with the correct revision reported by svn.github.com.
+
 ### Using PEAR
 
 ### Using the phar installer

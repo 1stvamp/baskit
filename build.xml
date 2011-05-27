@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="baskit-build" default="build">
+    <property file="build.properties"/>
     <target name="build">
 	<pearpkg name="baskit" dir="${application.startdir}" destFile="${application.startdir}/package.xml">
 	    <fileset dir=".">
@@ -7,6 +8,7 @@
 		<exclude name="**/.gitignore"/>
 		<exclude name=".git/**"/>
 		<exclude name="build.xml"/>
+		<exclude name="build.properties"/>
 		<exclude name=".pearrc"/>
 		<exclude name="bin/**"/>
 		<exclude name="parts/**"/>
@@ -17,18 +19,43 @@
 	    <option name="notes">Baskit PEAR release</option>
 	    <option name="description"><![CDATA[_baskit_ is a zc.buildout/virtualenv/rvm style sandboxed build environment for PHP, based on PEAR and Phing.
 Using baskit you can create a build environment separate from your system, that uses your system installed PHP, but with it's own dependencies (e.g. specific versions of PEAR installable packages), and run automated build tasks against this environment with Phing.]]></option>
-	    <option name="summary">Sandboxed build environment bootstrapping for PHP/PEAR/Phing.</option>
-	    <option name="version" value="1.0.0"/>
-	    <option name="state" value="stable"/>
-	    <option name="license">Apache License, Version 2.0</option>
+	    <option name="summary">${baskit.package.summary}</option>
+	    <option name="version" value="${baskit.package.version}"/>
+	    <option name="state" value="${baskit.package.releasetype}"/>
+	    <option name="license">${baskit.package.licene}</option>
 	    <mapping name="maintainers">
 		<element>
-		    <element key="handle" value="1stvamp"/>
-		    <element key="name" value="Wes Mason"/>
-		    <element key="email" value="wes.mason@isotoma.com"/>
+		    <element key="handle" value="${baskit.package.maintainer.handle}"/>
+		    <element key="name" value="${baskit.package.maintainer.name}"/>
+		    <element key="email" value="${baskit.package.maintainer.email}"/>
 		    <element key="role" value="lead"/>
 		</element>
 	    </mapping>
 	</pearpkg>
+	<pharpackage
+	    destfile="./baskit.phar"
+	    basedir="./">
+	    <fileset dir=".">
+		<include name="**"/>
+		<exclude name="**/.gitignore"/>
+		<exclude name=".git/**"/>
+		<exclude name="build.xml"/>
+		<exclude name="build.properties"/>
+		<exclude name=".pearrc"/>
+		<exclude name="bin/**"/>
+		<exclude name="parts/**"/>
+		<exclude name="var/**"/>
+		<exclude name="download_cache/**"/>
+		<exclude name="example/**"/>
+	    </fileset>
+	    <metadata>
+		<element name="version" value="${baskit.package.version}" />
+		<element name="authors">
+		    <element name="${baskit.package.maintainer.name}">
+			<element name="e-mail" value="${baskit.package.maintainer.email}" />
+		    </element>
+		</element>
+	    </metadata>
+	</pharpackage>
     </target>
 </project>

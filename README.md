@@ -32,18 +32,18 @@ e.g. in your project base you would run `php baskit/bootstrap.php`.
 
 ### Using Subversion externals
 
-    svn propedit svn:externals .
-    # Add: baskit https://svn.github.com/isotoma/baskit.git
-    # to your externals
+    svn propget svn:externals . > /tmp/baskit_svn_externals
+    echo "baskit https://svn.github.com/isotoma/baskit.git" >> /tmp/baskit_svn_externals
+    svn propset svn:externals -F /tmp/baskit_svn_externals
     svn ci -m 'Added baskit'
     svn up
 
-*Caveat emptor*: Because this is a checkout from Github's SVN mirroring service, there is no support for pinning to
+**Caveat emptor**: Because this is a checkout from Github's SVN mirroring service, there is no support for pinning to
 branches or tags, so using this you'd be stuck with whatever is at `HEAD`.
 
 You *can* pin the external to a specific comit in the Github virtual SVN repo, e.g.:
 
-    baskit -r100 https://svn.github.com/isotoma/baskit.git
+    baskit -r 100 https://svn.github.com/isotoma/baskit.git
 
 However you'll have to work out which commit to pin to yourself as it would be very difficult to update this document every release with the correct revision reported by svn.github.com.
 

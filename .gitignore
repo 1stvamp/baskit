@@ -4,4 +4,4 @@ parts
 var
 download_cache
 package.xml
-baskit.phar
+builds

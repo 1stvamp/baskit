@@ -2,8 +2,10 @@
 <project name="baskit-build" default="build">
     <property file="build.properties"/>
     <target name="build">
-	<pearpkg name="baskit" dir="${application.startdir}" destFile="${application.startdir}/package.xml">
-	    <fileset dir=".">
+	<mkdir dir="${baskit.package.builds_dir}"/>
+	<pearpkg name="baskit" dir="${application.startdir}"
+	    destFile="${application.startdir}/package.xml">
+	    <fileset dir="${application.startdir}">
 		<include name="**"/>
 		<exclude name="**/.gitignore"/>
 		<exclude name=".git/**"/>
@@ -13,6 +15,7 @@
 		<exclude name="bin/**"/>
 		<exclude name="parts/**"/>
 		<exclude name="var/**"/>
+		<exclude name="builds/**"/>
 		<exclude name="download_cache/**"/>
 		<exclude name="example/**"/>
 	    </fileset>
@@ -32,10 +35,8 @@ Using baskit you can create a build environment separate from your system, that 
 		</element>
 	    </mapping>
 	</pearpkg>
-	<pharpackage
-	    destfile="./baskit.phar"
-	    basedir="./">
-	    <fileset dir=".">
+	<tar destfile="${baskit.package.builds_dir}/baskit-${baskit.package.version}.tgz" compression="gzip">
+	    <fileset dir="${application.startdir}">
 		<include name="**"/>
 		<exclude name="**/.gitignore"/>
 		<exclude name=".git/**"/>
@@ -45,6 +46,26 @@ Using baskit you can create a build environment separate from your system, that 
 		<exclude name="bin/**"/>
 		<exclude name="parts/**"/>
 		<exclude name="var/**"/>
+		<exclude name="builds/**"/>
+		<exclude name="download_cache/**"/>
+		<exclude name="example/**"/>
+	    </fileset>
+	</tar>
+	<pharpackage
+	    destfile="${baskit.package.builds_dir}/baskit.phar"
+	    basedir="${application.startdir}">
+	    <fileset dir=".">
+		<include name="**"/>
+		<exclude name="**/.gitignore"/>
+		<exclude name=".git/**"/>
+		<exclude name="package.xml"/>
+		<exclude name="build.xml"/>
+		<exclude name="build.properties"/>
+		<exclude name=".pearrc"/>
+		<exclude name="bin/**"/>
+		<exclude name="parts/**"/>
+		<exclude name="var/**"/>
+		<exclude name="builds/**"/>
 		<exclude name="download_cache/**"/>
 		<exclude name="example/**"/>
 	    </fileset>

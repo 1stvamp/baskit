@@ -50,7 +50,7 @@ However you'll have to work out which commit to pin to yourself as it would be v
 ### Using PEAR
 To install using system installed PEAR:
 
-    pear channel-discover hydrogen.isotoma.com/pear
+    pear channel-discover pear.h.isotoma.com
     pear install isotoma-public/baskit
 
 Then you should be able to run from anywhere as a system command:

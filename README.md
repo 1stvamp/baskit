@@ -48,6 +48,18 @@ You *can* pin the external to a specific comit in the Github virtual SVN repo, e
 However you'll have to work out which commit to pin to yourself as it would be very difficult to update this document every release with the correct revision reported by svn.github.com.
 
 ### Using PEAR
+To install using system installed PEAR:
+
+    pear channel-discover hydrogen.isotoma.com/pear
+    pear install isotoma-public/baskit
+
+Then you should be able to run from anywhere as a system command:
+
+    baskit
+
+If this doesn't work you may need to run from PHP:
+
+    php baskit
 
 ### Using the phar installer
 

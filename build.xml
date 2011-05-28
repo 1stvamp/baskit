@@ -8,6 +8,7 @@
 	    <fileset dir="${application.startdir}">
 		<include name="**"/>
 		<exclude name="**/.gitignore"/>
+		<exclude name="**/*.swp"/>
 		<exclude name=".git/**"/>
 		<exclude name="build.xml"/>
 		<exclude name="build.properties"/>
@@ -33,6 +34,11 @@ Using baskit you can create a build environment separate from your system, that 
 		    <element key="email" value="${baskit.package.maintainer.email}"/>
 		    <element key="role" value="lead"/>
 		</element>
+	    </mapping>
+	    <mapping name="exceptions">
+		<element key="baskit" value="script"/>
+		<element key="README.md" value="doc"/>
+		<element key="LICENSE" value="doc"/>
 	    </mapping>
 	</pearpkg>
 	<tar destfile="${baskit.package.builds_dir}/baskit-${baskit.package.version}.tgz" compression="gzip">

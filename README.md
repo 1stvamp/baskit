@@ -27,8 +27,8 @@ The requirements for _baskit_ are:
     git add baskit
     git commit -m 'Switched to baskit 1.0.0'
 
-When you come to bootstrap your environment you would reference `bootstrap.php` as being in `baskit`,
-e.g. in your project base you would run `php baskit/bootstrap.php`.
+When you come to bootstrap your environment you would reference the `baskit` script as being in `baskit`,
+e.g. in your project base you would run `php baskit/baskit`.
 
 ### Using Subversion externals
 
@@ -53,9 +53,14 @@ However you'll have to work out which commit to pin to yourself as it would be v
 
 Usage
 -----
-To create a new environment:
+To create a new environment run the `baskit` script in your project base dir, e.g.
+if you've copied in via Git or SVN:
 
-    php bootstrap.php
+    php baskit/baskit
+
+Or installed via PEAR or the phar installer:
+
+    baskit
 
 Which will give you a `./bin` directory with scripts for PEAR and Phing:
 

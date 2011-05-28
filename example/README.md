@@ -7,7 +7,7 @@ To bootstrap the build environment and build the project:
 
     # Assuming we're inside the baskit base directory
     cd example
-    php ../bootstrap.php
+    php ../baskit
     
     # Let's symlink the isotoma directory which contains common baskit tasks and targets
     # you could also cp this in, but I'm avoiding the clutter for the example project.

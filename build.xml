@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="baskit-build" default="build">
+    <!-- Phing build file for generating baskit installation packages (PEAR, Phar, deb and rpm) -->
     <property file="build.properties"/>
     <target name="build">
 	<mkdir dir="${baskit.package.builds_dir}"/>
+	<!-- PEAR -->
 	<pearpkg name="baskit" dir="${application.startdir}"
 	    destFile="${application.startdir}/package.xml">
 	    <fileset dir="${application.startdir}">
@@ -21,12 +23,12 @@
 		<exclude name="example/**"/>
 	    </fileset>
 	    <option name="notes">Baskit PEAR release</option>
-	    <option name="description"><![CDATA[_baskit_ is a zc.buildout/virtualenv/rvm style sandboxed build environment for PHP, based on PEAR and Phing.
+	    <option name="description"><![CDATA[baskit is a zc.buildout/virtualenv/rvm style sandboxed build environment for PHP, based on PEAR and Phing.
 Using baskit you can create a build environment separate from your system, that uses your system installed PHP, but with it's own dependencies (e.g. specific versions of PEAR installable packages), and run automated build tasks against this environment with Phing.]]></option>
 	    <option name="summary">${baskit.package.summary}</option>
 	    <option name="version" value="${baskit.package.version}"/>
 	    <option name="state" value="${baskit.package.releasetype}"/>
-	    <option name="license">${baskit.package.licene}</option>
+	    <option name="license">${baskit.package.license}</option>
 	    <mapping name="maintainers">
 		<element>
 		    <element key="handle" value="${baskit.package.maintainer.handle}"/>
@@ -57,6 +59,8 @@ Using baskit you can create a build environment separate from your system, that 
 		<exclude name="example/**"/>
 	    </fileset>
 	</tar>
+	<!-- /PEAR -->
+	<!-- Phar -->
 	<pharpackage
 	    destfile="${baskit.package.builds_dir}/baskit.phar"
 	    basedir="${application.startdir}">
@@ -84,5 +88,117 @@ Using baskit you can create a build environment separate from your system, that 
 		</element>
 	    </metadata>
 	</pharpackage>
+	<!-- /Phar -->
+	<!-- deb -->
+	<mkdir dir="${baskit.package.builds_dir}/deb"/>
+	<exec
+	    command="echo 'garbage or enter or something' | dh_make -e ${baskit.package.maintainer.email} -f ../baskit-${baskit.package.version}.tgz -m -c apache -p baskit_${baskit.package.version}"
+	    dir="${baskit.package.builds_dir}/deb" />
+	<echo file="${baskit.package.builds_dir}/deb/debian/copyright"><![CDATA[Format: http://dep.debian.net/deps/dep5
+Upstream-Name: baskit
+Source: https://github.com/isotoma/baskit
+
+Files: debian/*
+Copyright: 2011 Isotoma Limited
+License: Apache-2.0
+
+License: Apache-2.0
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+ .
+ http://www.apache.org/licenses/LICENSE-2.0
+ .
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+ .
+ On Debian systems, the complete text of the Apache version 2.0 license
+ can be found in "/usr/share/common-licenses/Apache-2.0".
+
+# Please also look if there are files or directories which have a
+# different copyright/license attached and list them here.]]></echo>
+	<echo file="${baskit.package.builds_dir}/deb/debian/control"><![CDATA[Source: baskit
+Section: php
+Priority: extra
+Maintainer: ${baskit.package.maintainer.name <${baskit.package.maintainer.email}>
+Build-Depends: debhelper (>= 7.0.50~), php-pear (>= 5.0.0~)
+Standards-Version: 3.9.1
+Homepage: https://github.com/isotoma/baskit
+#Vcs-Git: git://github.com/isotoma/baskit.git
+#Vcs-Browser: https://github.com/isotoma/baskit
+
+Package: baskit
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: ${baskit.package.summary}
+ baskit is a zc.buildout/virtualenv/rvm style sandboxed build environment for PHP, based on PEAR and Phing.
+ Using baskit you can create a build environment separate from your system, that uses your system installed PHP, but with it's own dependencies (e.g. specific versions of PEAR installable packages), and run automated build tasks against this environment with Phing.
+
+Package: baskit-doc
+Architecture: all
+Description: documentation for baskit
+ documentation for baskit]]></echo>
+	<echo file="${baskit.package.builds_dir}/deb/debian/rules"><![CDATA[#!/usr/bin/make -f
+# IX custom script for making pear modules into debian package. you need to have php-pear installed first.
+PEAR ?= /usr/bin/pear
+# Your package name. Make sure it is consistent with other files.
+package = baskit
+configure: configure-stamp
+configure-stamp:
+	dh_testdir
+	touch configure-stamp
+	build: build-stamp
+	build-stamp: configure-stamp
+	dh_testdir
+	touch build-stamp
+clean:
+	dh_clean build-stamp configure-stamp
+install: build
+	dh_testdir
+	dh_testroot
+	dh_clean -k
+	dh_installdirs
+	# Add here commands to install the package into debian/package.
+	# if the script does not work test with this line and see error
+	$(PEAR) install -n -R debian/$(package) -f package.xml;
+	# remove unwanted pear files left by installation
+	rm -f debian/$(package)/usr/share/php/.filemap;
+	rm -f debian/$(package)/usr/share/php/.lock;
+	rm -rf debian/$(package)/usr/share/php/.channels;
+	rm -rf debian/$(package)/usr/share/php/.depdblock;
+	rm -rf debian/$(package)/usr/share/php/.depdb;
+	rm -rf debian/$(package)/usr/share/php/.registry/.channel.pecl.php.net;
+	rm -rf debian/$(package)/usr/share/php/.registry/.channel.__uri;
+	# remove duplicated files, these files are in /usr/share/doc/package
+	rm -rf debian/$(package)/usr/share/php/tests;
+	rm -rf debian/$(package)/usr/share/php/docs;
+	# remove created tmp dir
+	rm -rf debian/$(package)/tmp
+	# Build architecture-independent files here.
+binary-indep: build install
+	# We have nothing to do by default.
+	# Build architecture-dependent files here.
+binary-arch: build install
+	dh_testdir
+	dh_testroot
+	dh_installdocs
+	dh_installexamples
+	dh_installchangelogs
+	dh_compress
+	dh_fixperms
+	dh_installdeb
+	dh_gencontrol
+	dh_md5sums
+	dh_builddeb
+binary: binary-indep binary-arch
+.PHONY: build clean binary-indep binary-arch binary install configure]]></echo>
+	<copy file="${application.startdir}/package.xml" tofile="${baskit.package.builds_dir}/deb/package.xml"/>
+	<exec command="dpkg-buildpackage -rfakeroot" dir="${baskit.package.builds_dir}/deb" />
+	<!-- /deb -->
+	<!-- rpm -->
+	<!-- /rpm -->
     </target>
 </project>

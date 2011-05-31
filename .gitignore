@@ -5,4 +5,4 @@ var
 download_cache
 package.xml
 builds
-build_files
+.build_files

@@ -62,6 +62,23 @@ If this doesn't work you may need to run from PHP:
     php baskit
 
 ### Using the phar installer
+To install system wide:
+
+    curl https://github.com/isotoma/baskit/downloads/baskit-1.0.0.phar | sudo php
+
+To install locally only, drop `sudo`:
+
+    curl https://github.com/isotoma/baskit/downloads/baskit-1.0.0.phar | php
+
+### Using the Debian/Ubuntu packages
+
+    curl -C - -O https://github.com/isotoma/baskit/downloads/baskit-1.0.0_all.deb
+    sudo dpkg -i baskit-1.0.0_all.deb
+
+### Using Fedora/Redhat/CentOS package
+
+    curl -C - -O https://github.com/isotoma/baskit/downloads/baskit-1.0.0.noarch.rpm
+    sudo yum install baskit-1.0.0.noarch.rpm
 
 Usage
 -----

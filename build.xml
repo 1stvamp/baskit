@@ -86,7 +86,7 @@ Using baskit you can create a build environment separate from your system, that 
 	<mkdir dir="${baskit.package.builds_output_dir}"/>
 	<mkdir dir="${baskit.package.builds_output_dir}/phar"/>
 	<pharpackage
-	    destfile="${baskit.package.builds_dir}/baskit.phar"
+            destfile="${baskit.package.builds_dir}/baskit-${baskit.package.version}.phar"
 	    basedir="${application.startdir}">
 	    <fileset dir=".">
 		<include name="**"/>

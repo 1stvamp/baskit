@@ -39,6 +39,11 @@ class PearInstallTask extends Task {
     private $cwd = null;
 
     /**
+     * Optional args to pass to pear
+     */
+    private $args = null;
+
+    /**
      * The setter for the attribute "name"
      */
     public function setName($str) {
@@ -57,6 +62,13 @@ class PearInstallTask extends Task {
      */
     public function setChannel($str) {
         $this->channel = $str;
+    }
+
+    /**
+     * The setter for the attribute "args"
+     */
+    public function setArgs($str) {
+        $this->args = $str;
     }
 
     /**
@@ -111,8 +123,12 @@ class PearInstallTask extends Task {
 	    }
         }
 
+        if ($this->args !== null) {
+            $args = $this->args;
+        }
+
         $cwd = $this->getCwd();
-        exec("${cwd}/bin/pear install ${name} 2>&1", $output, $ret);
+        exec("${cwd}/bin/pear install ${args} ${name} 2>&1", $output, $ret);
         array_pop($output);
         $out = implode(PHP_EOL, $output);
 	$this->log($out . PHP_EOL);

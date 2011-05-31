@@ -1,10 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="baskit-build" default="build">
+<project name="baskit-build" default="build_all">
     <!-- Phing build file for generating baskit installation packages (PEAR, Phar, deb and rpm) -->
     <property file="build.properties"/>
-    <target name="build">
+    <taskdef name="pearinstall" classname="phing.tasks.PearInstallTask" />
+    <target name="build_all">
+	<phingcall target="build_pear"/>
+	<phingcall target="build_phar"/>
+	<phingcall target="build_deb"/>
+	<phingcall target="build_rpm"/>
+    </target>
+    <target name="build_pear">
 	<mkdir dir="${baskit.package.builds_dir}"/>
-	<!-- PEAR -->
+	<mkdir dir="${baskit.package.builds_output_dir}"/>
+	<mkdir dir="${baskit.package.builds_output_dir}/pear"/>
 	<pearpkg name="baskit" dir="${application.startdir}"
 	    destFile="${application.startdir}/package.xml">
 	    <fileset dir="${application.startdir}">
@@ -18,6 +26,7 @@
 		<exclude name="bin/**"/>
 		<exclude name="parts/**"/>
 		<exclude name="var/**"/>
+		<exclude name="build_files/**"/>
 		<exclude name="builds/**"/>
 		<exclude name="download_cache/**"/>
 		<exclude name="example/**"/>
@@ -43,7 +52,11 @@ Using baskit you can create a build environment separate from your system, that 
 		<element key="LICENSE" value="doc"/>
 	    </mapping>
 	</pearpkg>
-	<tar destfile="${baskit.package.builds_dir}/baskit-${baskit.package.version}.tgz" compression="gzip">
+	<delete file="${baskit.package.builds_dir}/baskit-${baskit.package.version}.tgz"/>
+	<tar
+	    destfile="${baskit.package.builds_dir}/baskit-${baskit.package.version}.tgz"
+	    compression="gzip"
+	    prefix="baskit-${baskit.package.version}">
 	    <fileset dir="${application.startdir}">
 		<include name="**"/>
 		<exclude name="**/.gitignore"/>
@@ -54,13 +67,22 @@ Using baskit you can create a build environment separate from your system, that 
 		<exclude name="bin/**"/>
 		<exclude name="parts/**"/>
 		<exclude name="var/**"/>
+		<exclude name="build_files/**"/>
 		<exclude name="builds/**"/>
 		<exclude name="download_cache/**"/>
 		<exclude name="example/**"/>
 	    </fileset>
 	</tar>
-	<!-- /PEAR -->
-	<!-- Phar -->
+	<copy todir="${baskit.package.builds_output_dir}/pear">
+	    <fileset dir="${baskit.package.builds_dir}">
+		<include name="baskit-${baskit.package.version}.tgz"/>
+	    </fileset>
+	</copy>
+    </target>
+    <target name="build_phar">
+	<mkdir dir="${baskit.package.builds_dir}"/>
+	<mkdir dir="${baskit.package.builds_output_dir}"/>
+	<mkdir dir="${baskit.package.builds_output_dir}/phar"/>
 	<pharpackage
 	    destfile="${baskit.package.builds_dir}/baskit.phar"
 	    basedir="${application.startdir}">
@@ -76,6 +98,7 @@ Using baskit you can create a build environment separate from your system, that 
 		<exclude name="parts/**"/>
 		<exclude name="var/**"/>
 		<exclude name="builds/**"/>
+		<exclude name="build_files/**"/>
 		<exclude name="download_cache/**"/>
 		<exclude name="example/**"/>
 	    </fileset>
@@ -88,11 +111,19 @@ Using baskit you can create a build environment separate from your system, that 
 		</element>
 	    </metadata>
 	</pharpackage>
-	<!-- /Phar -->
-	<!-- deb -->
+	<copy todir="${baskit.package.builds_output_dir}/phar">
+	    <fileset dir="${baskit.package.builds_dir}">
+		<include name="*.phar"/>
+	    </fileset>
+	</copy>
+    </target>
+    <target name="build_deb">
+	<mkdir dir="${baskit.package.builds_dir}"/>
 	<mkdir dir="${baskit.package.builds_dir}/deb"/>
+	<mkdir dir="${baskit.package.builds_output_dir}"/>
+	<mkdir dir="${baskit.package.builds_output_dir}/deb"/>
 	<exec
-	    command="echo 'garbage or enter or something' | dh_make -e ${baskit.package.maintainer.email} -f ../baskit-${baskit.package.version}.tgz -m -c apache -p baskit_${baskit.package.version}"
+	    command="echo 'xxxxxxxxxxxxxxxxxx' | dh_make -e ${baskit.package.maintainer.email} -f ../baskit-${baskit.package.version}.tgz -m -c apache -p baskit_${baskit.package.version}"
 	    dir="${baskit.package.builds_dir}/deb" />
 	<echo file="${baskit.package.builds_dir}/deb/debian/copyright"><![CDATA[Format: http://dep.debian.net/deps/dep5
 Upstream-Name: baskit
@@ -197,8 +228,105 @@ binary: binary-indep binary-arch
 .PHONY: build clean binary-indep binary-arch binary install configure]]></echo>
 	<copy file="${application.startdir}/package.xml" tofile="${baskit.package.builds_dir}/deb/package.xml"/>
 	<exec command="dpkg-buildpackage -rfakeroot" dir="${baskit.package.builds_dir}/deb" />
-	<!-- /deb -->
-	<!-- rpm -->
-	<!-- /rpm -->
+	<copy todir="${baskit.package.builds_output_dir}/deb">
+	    <fileset dir="${baskit.package.builds_dir}">
+		<include name="*.deb"/>
+	    </fileset>
+	</copy>
+    </target>
+    <target name="build_rpm">
+	<mkdir dir="${baskit.package.builds_dir}"/>
+	<mkdir dir="${baskit.package.builds_output_dir}"/>
+	<mkdir dir="${baskit.package.builds_output_dir}/rpm"/>
+	<php returnProperty="userhome" function="getenv">
+	    <param value="HOME"/>
+	</php>
+	<copy file="${baskit.package.builds_dir}/baskit-${baskit.package.version}.tgz" todir="${userhome}/rpmbuild/SOURCES"/>
+	<echo file="${userhome}/rpmbuild/SPECS/baskit-${baskit.package.version}.spec"><![CDATA[%define peardir %(pear config-get php_dir 2> /dev/null || echo %{_datadir}/pear)
+%define xmldir  /var/lib/pear
+
+Summary: PEAR: Sandboxed build environment bootstrapping for PHP/PEAR/Phing
+Name: baskit
+Version: ${baskit.package.version}
+Release: 1
+License: Apache License, Version 2.0
+Group: Development/Libraries
+Source0: http://pear.h.isotoma.com/get/baskit-%{version}.tgz
+BuildRoot: %{_tmppath}/%{name}-%{version}-root-%(%{__id_u} -n)
+URL: http://pear.h.isotoma.com/package/baskit
+BuildRequires: PEAR >= 1.4.7
+
+BuildArch: noarch
+
+%description
+baskit is a zc.buildout/virtualenv/rvm style sandboxed build environment
+for PHP, based on PEAR and Phing.
+Using baskit you can create a build environment separate from your system,
+that uses your system installed PHP, but with it's own dependencies (e.g.
+specific versions of PEAR installable packages), and run automated build
+tasks against this environment with Phing.
+ 
+
+
+%prep
+%setup -c -T
+pear -v -c pearrc \
+        -d php_dir=%{peardir} \
+        -d doc_dir=/docs \
+        -d bin_dir=%{_bindir} \
+        -d data_dir=%{peardir}/data \
+        -d test_dir=%{peardir}/tests \
+        -d ext_dir=%{_libdir} \
+        -s
+
+%build
+
+%install
+rm -rf %{buildroot}
+pear -c pearrc install --nodeps --packagingroot %{buildroot} %{SOURCE0}
+        
+# Clean up unnecessary files
+rm pearrc
+rm %{buildroot}/%{peardir}/.filemap
+rm %{buildroot}/%{peardir}/.lock
+rm -rf %{buildroot}/%{peardir}/.registry
+rm -rf %{buildroot}%{peardir}/.channels
+rm %{buildroot}%{peardir}/.depdb
+rm %{buildroot}%{peardir}/.depdblock
+
+mv %{buildroot}/docs .
+
+
+# Install XML package description
+mkdir -p %{buildroot}%{xmldir}
+tar -xzf %{SOURCE0} baskit-%{version}/package.xml
+cp -p baskit-%{version}/package.xml %{buildroot}%{xmldir}/baskit.xml
+
+%clean
+rm -rf %{buildroot}
+
+%post
+pear install --nodeps --soft --force --register-only %{xmldir}/baskit.xml
+mv %{_bindir}/baskit/baskit %{_bindir}/baskit
+
+%postun
+if [ "$1" -eq "0" ]; then
+    pear uninstall --nodeps --ignore-errors --register-only pear.h.isotoma.com/baskit
+fi
+
+%files
+%{_bindir}/baskit
+%defattr(-,root,root)
+%doc docs/baskit/*
+%{peardir}/*
+%{xmldir}/baskit.xml]]></echo>
+	<exec
+	    command="rpmbuild -bb --nodeps baskit-${baskit.package.version}.spec"
+	    dir="${userhome}/rpmbuild/SPECS"/>
+	<copy todir="${baskit.package.builds_output_dir}/rpm">
+	    <fileset dir="${userhome}/rpmbuild/RPMS">
+		<include name="**/*.rpm"/>
+	    </fileset>
+	</copy>
     </target>
 </project>

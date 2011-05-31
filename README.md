@@ -50,6 +50,11 @@ However you'll have to work out which commit to pin to yourself as it would be v
 ### Using PEAR
 To install using system installed PEAR:
 
+    sudo pear channel-discover pear.h.isotoma.com
+    sudo pear install isotoma-public/baskit
+
+To install locally only, drop `sudo`:
+
     pear channel-discover pear.h.isotoma.com
     pear install isotoma-public/baskit
 

@@ -118,3 +118,24 @@ To make building your project and installing dependencies easier and more mainta
  * **apache.xml** - Convenience target for generating an Apache2 virtualhost conf file in `./var`.
 
 For a more information on using the _baskit_ Phing build components take a look at the example project in `./example` (read `./example/README.md` first).
+
+Building baskit yourself
+--------------------------
+_baskit_ can be installed via a number of different packaging forms, as well as used directly from the PHP/XML source, to generate these packages yourself (such as the PEAR package or RPM) you can use _baskit_ to bootstrap and build itself from a checkout:
+
+    git checkout https://github.com/isotoma/baskit.git
+    cd baskit
+    ./baskit
+    bin/phing
+    
+    # You can also build a specific package by naming one of the following targets
+    # build_pear
+    # build_phar
+    # build_deb
+    # build_rpm
+    # e.g.
+    bin/phing build_phar
+
+The Debian and RPM targets require some system packages to be present, e.g. on a Debian/Ubuntu system we would install:
+
+    sudo apt-get install dpkg-dev rpm

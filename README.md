@@ -75,7 +75,7 @@ To install locally only, drop `sudo`:
     curl -C - -O https://github.com/isotoma/baskit/downloads/baskit-1.0.0_all.deb
     sudo dpkg -i baskit-1.0.0_all.deb
 
-### Using Fedora/Redhat/CentOS package
+### Using the Fedora/Redhat/CentOS package
 
     curl -C - -O https://github.com/isotoma/baskit/downloads/baskit-1.0.0.noarch.rpm
     sudo yum install baskit-1.0.0.noarch.rpm

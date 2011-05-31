@@ -144,3 +144,9 @@ _baskit_ can be installed via a number of different packaging forms, as well as 
 The Debian and RPM targets require some system packages to be present, e.g. on a Debian/Ubuntu system we would install:
 
     sudo apt-get install dpkg-dev dh-make rpm
+
+If the `build_phar` target complains about the `phar.readonly` property of your `php.ini` config, then you'll need to edit your CLI `php.ini` (on Debian/Ubuntu found normally found at `/etc/php5/cli/php.ini`).
+
+Find the line for `phar.readonly`, and change it's value from *On* to *Off*, if the line begins with a semicolon, remove the semi-colon, so the line should look like this:
+
+    phar.readonly = Off

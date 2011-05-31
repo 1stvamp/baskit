@@ -131,6 +131,9 @@ _baskit_ can be installed via a number of different packaging forms, as well as 
     git checkout https://github.com/isotoma/baskit.git
     cd baskit
     ./baskit
+    # We need to install this separately as we can't install and use within the same build
+    bin/pear install channel://pear.php.net/XML_Serializer-0.20.2
+    bin/pear install --alldeps PEAR_PackageFileManager
     bin/phing
     
     # You can also build a specific package by naming one of the following targets
@@ -143,4 +146,4 @@ _baskit_ can be installed via a number of different packaging forms, as well as 
 
 The Debian and RPM targets require some system packages to be present, e.g. on a Debian/Ubuntu system we would install:
 
-    sudo apt-get install dpkg-dev rpm
+    sudo apt-get install dpkg-dev dh-make rpm

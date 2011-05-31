@@ -2,7 +2,6 @@
 <project name="baskit-build" default="build_all">
     <!-- Phing build file for generating baskit installation packages (PEAR, Phar, deb and rpm) -->
     <property file="build.properties"/>
-    <taskdef name="pearinstall" classname="phing.tasks.PearInstallTask" />
     <target name="build_all">
 	<phingcall target="build_pear"/>
 	<phingcall target="build_phar"/>
@@ -154,7 +153,7 @@ License: Apache-2.0
 	<echo file="${baskit.package.builds_dir}/deb/debian/control"><![CDATA[Source: baskit
 Section: php
 Priority: extra
-Maintainer: ${baskit.package.maintainer.name <${baskit.package.maintainer.email}>
+Maintainer: ${baskit.package.maintainer.name} <${baskit.package.maintainer.email}>
 Build-Depends: debhelper (>= 7.0.50~), php-pear (>= 5.0.0~)
 Standards-Version: 3.9.1
 Homepage: https://github.com/isotoma/baskit
@@ -212,6 +211,17 @@ install: build
 binary-indep: build install
 	# We have nothing to do by default.
 	# Build architecture-dependent files here.
+	dh_testdir
+	dh_testroot
+	dh_installdocs
+	dh_installexamples
+	dh_installchangelogs
+	dh_compress
+	dh_fixperms
+	dh_installdeb
+	dh_gencontrol
+	dh_md5sums
+	dh_builddeb
 binary-arch: build install
 	dh_testdir
 	dh_testroot
@@ -227,7 +237,7 @@ binary-arch: build install
 binary: binary-indep binary-arch
 .PHONY: build clean binary-indep binary-arch binary install configure]]></echo>
 	<copy file="${application.startdir}/package.xml" tofile="${baskit.package.builds_dir}/deb/package.xml"/>
-	<exec command="dpkg-buildpackage -rfakeroot" dir="${baskit.package.builds_dir}/deb" />
+	<exec command="dpkg-buildpackage -rfakeroot --arch-all" dir="${baskit.package.builds_dir}/deb" />
 	<copy todir="${baskit.package.builds_output_dir}/deb">
 	    <fileset dir="${baskit.package.builds_dir}">
 		<include name="*.deb"/>
@@ -241,6 +251,9 @@ binary: binary-indep binary-arch
 	<php returnProperty="userhome" function="getenv">
 	    <param value="HOME"/>
 	</php>
+        <mkdir dir="${userhome}/rpmbuild"/>
+        <mkdir dir="${userhome}/rpmbuild/SPECS"/>
+        <mkdir dir="${userhome}/rpmbuild/SOURCES"/>
 	<copy file="${baskit.package.builds_dir}/baskit-${baskit.package.version}.tgz" todir="${userhome}/rpmbuild/SOURCES"/>
 	<echo file="${userhome}/rpmbuild/SPECS/baskit-${baskit.package.version}.spec"><![CDATA[%define peardir %(pear config-get php_dir 2> /dev/null || echo %{_datadir}/pear)
 %define xmldir  /var/lib/pear

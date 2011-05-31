@@ -2,6 +2,9 @@
 <project name="baskit-build" default="build_all">
     <!-- Phing build file for generating baskit installation packages (PEAR, Phar, deb and rpm) -->
     <property file="build.properties"/>
+    <taskdef name="pearinstall" classname="phing.tasks.PearInstallTask" />
+    <pearinstall name="channel://pear.php.net/XML_Serializer-0.20.2"/>
+    <pearinstall name="PEAR_PackageFileManager" args="--alldeps"/>
     <target name="build_all">
 	<phingcall target="build_pear"/>
 	<phingcall target="build_phar"/>

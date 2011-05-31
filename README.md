@@ -70,7 +70,7 @@ To install locally only, drop `sudo`:
 
     curl https://github.com/isotoma/baskit/downloads/baskit-1.0.0.phar | php
 
-### Using the Debian/Ubuntu packages
+### Using the Debian/Ubuntu package
 
     curl -C - -O https://github.com/isotoma/baskit/downloads/baskit-1.0.0_all.deb
     sudo dpkg -i baskit-1.0.0_all.deb

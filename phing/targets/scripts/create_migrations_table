@@ -5,25 +5,25 @@
  *
  * @package Baskit
  * @version 1.0.0
- * @author Wes Mason <wes.mason@isotoma.com>
- * @copyright 2011 Isotoma Limited
+ * @author Wes Mason <wes.mason@baskit.com>
+ * @copyright 2011 baskit Limited
  * @license http://opensource.org/licenses/Apache-2.0 Apache License, Version 2.0
  */
 
 $host = <<< EOT
-${isotoma.db.host}
+${baskit.db.host}
 EOT;
 
 $dbname = <<< EOT
-${isotoma.db.database}
+${baskit.db.database}
 EOT;
 
 $username = <<< EOT
-${isotoma.db.username}
+${baskit.db.username}
 EOT;
 
 $password = <<< EOT
-${isotoma.db.password}
+${baskit.db.password}
 EOT;
 
 $sql = <<< EOT

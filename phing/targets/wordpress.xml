@@ -110,7 +110,14 @@
         <echo>Copied Wordpress customisations from ${baskit.srcdir}/wordpress</echo>
 
         <property file="${baskit.vardir}/wordpress.plugin.versions"/>
-        <foreach list="${wordpress.plugins}" param="plugin_shortname" target="install_plugin" delimiter=","/>
+        <if>
+            <not>
+                <equals arg1="${wordpress.plugins}" arg2=""/>
+            </not>
+            <then>
+                <foreach list="${wordpress.plugins}" param="plugin_shortname" target="install_plugin" delimiter=","/>
+            </then>
+        </if>
     </target>
 
     <target name="install_plugin">

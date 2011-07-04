@@ -28,7 +28,7 @@
 		<exclude name="bin/**"/>
 		<exclude name="parts/**"/>
 		<exclude name="var/**"/>
-		<exclude name="build_files/**"/>
+		<exclude name=".build_files/**"/>
 		<exclude name="builds/**"/>
 		<exclude name="download_cache/**"/>
 		<exclude name="example/**"/>
@@ -37,9 +37,10 @@
 	    <option name="description"><![CDATA[baskit is a zc.buildout/virtualenv/rvm style sandboxed build environment for PHP, based on PEAR and Phing.
 Using baskit you can create a build environment separate from your system, that uses your system installed PHP, but with it's own dependencies (e.g. specific versions of PEAR installable packages), and run automated build tasks against this environment with Phing.]]></option>
 	    <option name="summary">${baskit.package.summary}</option>
-	    <option name="version" value="${baskit.package.version}"/>
 	    <option name="state" value="${baskit.package.releasetype}"/>
 	    <option name="license">${baskit.package.license}</option>
+	    <option name="channel">baskit.h.isotoma.com</option>
+	    <option name="version" value="${baskit.package.version}"/>
 	    <mapping name="maintainers">
 		<element>
 		    <element key="handle" value="${baskit.package.maintainer.handle}"/>
@@ -54,32 +55,15 @@ Using baskit you can create a build environment separate from your system, that 
 		<element key="LICENSE" value="doc"/>
 	    </mapping>
 	</pearpkg>
+	<exec command="bin/pear package" dir="${application.startdir}"/>
 	<delete file="${baskit.package.builds_dir}/baskit-${baskit.package.version}.tgz"/>
-	<tar
-	    destfile="${baskit.package.builds_dir}/baskit-${baskit.package.version}.tgz"
-	    compression="gzip"
-	    prefix="baskit-${baskit.package.version}">
-	    <fileset dir="${application.startdir}">
-		<include name="**"/>
-		<exclude name="**/.gitignore"/>
-		<exclude name=".git/**"/>
-		<exclude name="build.xml"/>
-		<exclude name="build.properties"/>
-		<exclude name=".pearrc"/>
-		<exclude name="bin/**"/>
-		<exclude name="parts/**"/>
-		<exclude name="var/**"/>
-		<exclude name="build_files/**"/>
-		<exclude name="builds/**"/>
-		<exclude name="download_cache/**"/>
-		<exclude name="example/**"/>
-	    </fileset>
-	</tar>
-	<copy todir="${baskit.package.builds_output_dir}/pear">
-	    <fileset dir="${baskit.package.builds_dir}">
-		<include name="baskit-${baskit.package.version}.tgz"/>
+        <copy todir="${baskit.package.builds_dir}">
+            <fileset dir="${application.startdir}">
+                <include name="baskit-${baskit.package.version}.tgz"/>
 	    </fileset>
 	</copy>
+        <move file="${application.startdir}/baskit-${baskit.package.version}.tgz"
+            todir="${baskit.package.builds_output_dir}/pear"/>
     </target>
     <target name="build_phar">
 	<mkdir dir="${baskit.package.builds_dir}"/>
@@ -100,7 +84,7 @@ Using baskit you can create a build environment separate from your system, that 
 		<exclude name="parts/**"/>
 		<exclude name="var/**"/>
 		<exclude name="builds/**"/>
-		<exclude name="build_files/**"/>
+		<exclude name=".build_files/**"/>
 		<exclude name="download_cache/**"/>
 		<exclude name="example/**"/>
 	    </fileset>

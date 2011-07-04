@@ -14,6 +14,7 @@
 $home = getenv('HOME') . '/';
 $cwd = getcwd() . '/';
 $parts = $cwd . 'parts/';
+$var = $cwd . 'var/';
 $bin = $cwd . 'bin/';
 $cache = $cwd . 'download_cache/';
 
@@ -29,6 +30,10 @@ if (!file_exists($bin)) {
 if (!file_exists($cache)) {
         mkdir($cache);
         echo "Created ${cache}" . PHP_EOL;
+}
+if (!file_exists($var)) {
+        mkdir($var);
+        echo "Created ${var}" . PHP_EOL;
 }
 
 // Move any existing ~/.pearrc out of the way, temporarily
@@ -75,6 +80,7 @@ chmod("${bin}phing", 0755);
 $paths = implode(PATH_SEPARATOR, array(
     $parts,
     "${parts}pear/php",
+    $cwd,
 ));
 file_put_contents(
     "${parts}pear/php/phing_wrapper.php",

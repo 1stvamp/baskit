@@ -38,7 +38,8 @@ EOT;
     $_POST['admin_email'] = <<<EOT
 ${wordpress.site.admin_email}
 EOT;
-    array_walk($_POST, function(&$item) { trim($item); });
+    function isotoma_array_walk_trim(&$item) { trim($item); }
+    array_walk($_POST, 'isotoma_array_walk_trim');
 
     ob_start();
     require '${wp_dest}/wp-admin/install.php';

@@ -1,6 +1,8 @@
 baskit - PHP Build Environment
 ==============================
 
+![baskit logo](http://baskit.h.isotoma.com/baskit.png)
+
 About
 -----
 _baskit_ is a zc.buildout/virtualenv/rvm style sandboxed build environment for PHP, based on [PEAR](http://pear.php.net/ "PEAR") and [Phing](http://phing.info/ "Phing").

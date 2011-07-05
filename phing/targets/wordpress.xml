@@ -41,6 +41,7 @@
             <then>
                 <echo>Wordpress v${wordpress.version} required, installing..</echo>
 		<mkdir dir="${wp_dest}" />
+                <mkdir dir="${wp_dest}/wp-content/uploads/" />
                 <property name="wordpress.freshbuild" value="true" override="yes" />
 
                 <!-- Try to use the cache if it exists -->

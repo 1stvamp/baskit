@@ -47,7 +47,7 @@ if (file_exists("${home}.pearrc")) {
 echo 'Creating sandboxed ~/.pearrc' . PHP_EOL;
 exec("pear config-create ${parts} ${home}.pearrc 2>&1", $out);
 echo implode(PHP_EOL, $out) . PHP_EOL;
-exec('pear install -o PEAR  2>&1', $out);
+exec('pear install -o PEAR 2>&1', $out);
 echo implode(PHP_EOL, $out) . PHP_EOL;
 rename("${home}.pearrc", "${cwd}.pearrc");
 
@@ -64,10 +64,14 @@ file_put_contents("${bin}pear", "#!/bin/bash\n${parts}/pear/pear -c ${cwd}.pearr
 chmod("${bin}pear", 0755);
 echo 'Created bin/pear' . PHP_EOL;
 
-// Install Phing locally and wrap it's script
-exec("${bin}pear channel-discover pear.phing.info  2>&1", $out);
+// Make local pear aware of baskit's PEAR channel
+exec("${bin}pear channel-discover baskit.h.isotoma.com 2>&1", $out);
 echo implode(PHP_EOL, $out) . PHP_EOL;
-exec("${bin}pear install phing/phing  2>&1", $out);
+
+// Install Phing locally and wrap it's script
+exec("${bin}pear channel-discover pear.phing.info 2>&1", $out);
+echo implode(PHP_EOL, $out) . PHP_EOL;
+exec("${bin}pear install phing/phing 2>&1", $out);
 echo implode(PHP_EOL, $out) . PHP_EOL;
 if (file_exists("${bin}phing")) {
         unlink("${bin}phing");

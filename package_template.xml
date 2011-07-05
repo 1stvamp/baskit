@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<package packagerversion="1.8.0" version="2.0" xmlns="http://pear.php.net/dtd/package-2.0" xmlns:tasks="http://pear.php.net/dtd/tasks-1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://pear.php.net/dtd/tasks-1.0
+    http://pear.php.net/dtd/tasks-1.0.xsd
+    http://pear.php.net/dtd/package-2.0
+    http://pear.php.net/dtd/package-2.0.xsd">
+    <name>${baskit.package.name}</name>
+    <channel>${baskit.package.channel}</channel>
+    <summary>${baskit.package.summary}</summary>
+    <description>${baskit.package.description}</description>
+    <lead>
+	<name>${baskit.package.maintainer.name}</name>
+	<user>${baskit.package.maintainer.handle}</user>
+	<email>${baskit.package.maintainer.email}</email>
+	<active>yes</active>
+    </lead>
+    <date>${baskit.package.date}</date>
+    <time>${baskit.package.time}</time>
+    <version>
+	<release>${baskit.package.version}</release>
+	<api>${baskit.package.version}</api>
+    </version>
+    <stability>
+	<release>${baskit.package.release_type}</release>
+	<api>${baskit.package.release_type}</api>
+    </stability>
+    <license uri="${baskit.package.license_uri}">${baskit.package.license}</license>
+    <notes>${baskit.package.name} PEAR release</notes>
+    <contents>
+	<dir name="/">
+	    <dir name="phing">
+		<dir name="apache">
+		    <file role="data" baseinstalldir="baskit" name="vhost.conf"/>
+		</dir> <!-- /phing/apache -->
+		<dir name="targets">
+		    <dir name="scripts">
+			<file role="data" baseinstalldir="baskit" name="create_migrations_table"/>
+			<file role="data" baseinstalldir="baskit" name="wordpress_init_db"/>
+		    </dir> <!-- /phing/targets/scripts -->
+		    <file role="data" baseinstalldir="baskit" name="apache.xml"/>
+		    <file role="data" baseinstalldir="baskit" name="install_requirements.xml"/>
+		    <file role="data" baseinstalldir="baskit" name="migrations.xml"/>
+		    <file role="data" baseinstalldir="baskit" name="wordpress.xml"/>
+		</dir> <!-- /phing/targets -->
+		<dir name="tasks">
+		    <file role="php" baseinstalldir="baskit" name="PearInstallTask.php"/>
+		    <file role="php" baseinstalldir="baskit" name="PhpMigrateTask.php"/>
+		</dir> <!-- /phing/tasks -->
+		<file role="data" baseinstalldir="baskit" name="base.properties"/>
+	    </dir> <!-- /phing -->
+	    <file role="script" baseinstalldir="/" name="baskit"/>
+	    <file role="doc" baseinstalldir="baskit" name="LICENSE"/>
+	    <file role="doc" baseinstalldir="baskit" name="README.md"/>
+	</dir>
+    </contents>
+    <dependencies>
+	<required>
+	    <php>
+		<min>5.0.0</min>
+	    </php>
+	    <pearinstaller>
+		<min>1.4.0</min>
+	    </pearinstaller>
+	</required>
+    </dependencies>
+    <phprelease>
+	<filelist/>
+    </phprelease>
+</package>

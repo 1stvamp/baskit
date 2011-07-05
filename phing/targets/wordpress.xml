@@ -100,14 +100,6 @@
 	    </else>
 	</if>
 
-        <copy todir="${wp_dest}" overwrite="true" includeemptydirs="true">
-            <fileset dir="${baskit.srcdir}/wordpress">
-                <include name="**/*" />
-                <exclude name="**/wp-config.php"/>
-            </fileset>
-        </copy>
-        <echo>Copied Wordpress customisations from ${baskit.srcdir}/wordpress</echo>
-
         <property file="${baskit.vardir}/wordpress.plugin.versions"/>
         <if>
             <not>

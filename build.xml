@@ -108,6 +108,18 @@ License: Apache-2.0
 
 # Please also look if there are files or directories which have a
 # different copyright/license attached and list them here.]]></echo>
+	<echo file="${baskit.package.builds_dir}/deb/debian/changelog"><![CDATA[baskit (1.0.1-1) unstable; urgency=low
+
+  * Fixes to PEAR and Debian packaging
+  * Minor Wordpress/Apache target fixes.
+
+ -- ${baskit.package.maintainer.name} <${baskit.package.maintainer.email}>  Tue, 06 Jul 2011 06:50:31 +0100
+
+baskit (1.0.0-1) unstable; urgency=low
+
+  * Initial release
+
+ -- ${baskit.package.maintainer.name} <${baskit.package.maintainer.email}>  Tue, 05 Jul 2011 11:11:20 +0100]]></echo>
 	<echo file="${baskit.package.builds_dir}/deb/debian/control"><![CDATA[Source: baskit
 Section: php
 Priority: extra

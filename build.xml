@@ -288,8 +288,8 @@ mv %{buildroot}/docs .
 
 # Install XML package description
 mkdir -p %{buildroot}%{xmldir}
-tar -xzf %{SOURCE0} baskit-%{version}/package.xml
-cp -p baskit-%{version}/package.xml %{buildroot}%{xmldir}/baskit.xml
+tar -xzf %{SOURCE0} package.xml
+cp -p package.xml %{buildroot}%{xmldir}/baskit.xml
 
 %clean
 rm -rf %{buildroot}

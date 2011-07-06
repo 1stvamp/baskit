@@ -69,7 +69,7 @@ License: Apache-2.0
 
 # Please also look if there are files or directories which have a
 # different copyright/license attached and list them here.]]></echo>
-	<echo file="${baskit.package.builds_dir}/deb/debian/changelog"><![CDATA[baskit (1.0.3-1) unstable; urgency=low
+	<echo file="${baskit.package.builds_dir}/deb/debian/changelog"><![CDATA[baskit (1.0.4-1) unstable; urgency=low
   * Copying baskit to base dir rather than parts
 
  -- ${baskit.package.maintainer.name} <${baskit.package.maintainer.email}>  Tue, 06 Jul 2011 10:44:00 +0100

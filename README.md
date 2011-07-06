@@ -24,10 +24,10 @@ The requirements for _baskit_ are:
 
     # You probably want a specific version
     cd baskit
-    git checkout 1.0.1
+    git checkout 1.0.2
     cd ..
     git add baskit
-    git commit -m 'Switched to baskit 1.0.1'
+    git commit -m 'Switched to baskit 1.0.2'
 
 When you come to bootstrap your environment you would reference the `baskit` script as being in `baskit`,
 e.g. in your project base you would run `php baskit/baskit`.
@@ -68,31 +68,20 @@ If this doesn't work you may need to run from PHP:
 
     php baskit
 
-### Using the phar installer
-To install system wide:
-
-    curl -C - -O https://github.com/isotoma/baskit/downloads/baskit-1.0.1.phar
-    sudo php baskit-1.0.1.phar
-
-To install locally only, drop `sudo`:
-
-    curl -C - -O https://github.com/isotoma/baskit/downloads/baskit-1.0.1.phar
-    php baskit-1.0.1.phar
-
 ### Using the Debian/Ubuntu package
 
-    curl -C - -O https://github.com/isotoma/baskit/downloads/baskit-1.0.1-1_all.deb
-    sudo dpkg -i baskit-1.0.1-1_all.deb
+    curl -C - -O https://github.com/isotoma/baskit/downloads/baskit-1.0.2-1_all.deb
+    sudo dpkg -i baskit-1.0.2-1_all.deb
 
 ### Using the Fedora/Redhat/CentOS package
 
-    curl -C - -O https://github.com/isotoma/baskit/downloads/baskit-1.0.1.noarch.rpm
+    curl -C - -O https://github.com/isotoma/baskit/downloads/baskit-1.0.2.noarch.rpm
     sudo yum install baskit-1.0.0.noarch.rpm
 
 Usage
 -----
 To create a new environment run the `baskit` script in your project base dir, e.g.
-if installed via PEAR or the phar installer:
+if installed via PEAR, Deb or RPM:
 
     baskit
 
@@ -141,18 +130,12 @@ _baskit_ can be installed via a number of different packaging forms, as well as 
     
     # You can also build a specific package by naming one of the following targets
     # build_pear
-    # build_phar
     # build_deb
     # build_rpm
     # e.g.
-    bin/phing build_phar
+    bin/phing build_rpm
 
 The Debian and RPM targets require some system packages to be present, e.g. on a Debian/Ubuntu system we would install:
 
     sudo apt-get install dpkg-dev dh-make rpm
 
-If the `build_phar` target complains about the `phar.readonly` property of your `php.ini` config, then you'll need to edit your CLI `php.ini` (on Debian/Ubuntu found normally found at `/etc/php5/cli/php.ini`).
-
-Find the line for `phar.readonly`, and change it's value from *On* to *Off*, if the line begins with a semicolon, remove the semi-colon, so the line should look like this:
-
-    phar.readonly = Off

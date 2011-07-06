@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="baskit-build" default="build_all">
-    <!-- Phing build file for generating baskit installation packages (PEAR, Phar, deb and rpm) -->
+    <!-- Phing build file for generating baskit installation packages (PEAR, deb and rpm) -->
     <tstamp>
 	<format property="baskit.package.date" pattern="%Y-%m-%d" />
 	<format property="baskit.package.time" pattern="%H:%M:%s" />
@@ -11,7 +11,6 @@
     <pearinstall name="PEAR_PackageFileManager" args="--alldeps"/>
     <target name="build_all">
 	<phingcall target="build_pear"/>
-	<phingcall target="build_phar"/>
 	<phingcall target="build_deb"/>
 	<phingcall target="build_rpm"/>
     </target>
@@ -35,44 +34,6 @@
 	</copy>
         <move file="${application.startdir}/baskit-${baskit.package.version}.tgz"
             todir="${baskit.package.builds_output_dir}/pear"/>
-    </target>
-    <target name="build_phar">
-	<mkdir dir="${baskit.package.builds_dir}"/>
-	<mkdir dir="${baskit.package.builds_output_dir}"/>
-	<mkdir dir="${baskit.package.builds_output_dir}/phar"/>
-	<pharpackage
-            destfile="${baskit.package.builds_dir}/baskit-${baskit.package.version}.phar"
-	    basedir="${application.startdir}">
-	    <fileset dir=".">
-		<include name="**"/>
-		<exclude name="**/.gitignore"/>
-		<exclude name=".git/**"/>
-		<exclude name="package.xml"/>
-		<exclude name="build.xml"/>
-		<exclude name="build.properties"/>
-		<exclude name=".pearrc"/>
-		<exclude name="bin/**"/>
-		<exclude name="parts/**"/>
-		<exclude name="var/**"/>
-		<exclude name="builds/**"/>
-		<exclude name=".build_files/**"/>
-		<exclude name="download_cache/**"/>
-		<exclude name="example/**"/>
-	    </fileset>
-	    <metadata>
-		<element name="version" value="${baskit.package.version}" />
-		<element name="authors">
-		    <element name="${baskit.package.maintainer.name}">
-			<element name="e-mail" value="${baskit.package.maintainer.email}" />
-		    </element>
-		</element>
-	    </metadata>
-	</pharpackage>
-	<copy todir="${baskit.package.builds_output_dir}/phar">
-	    <fileset dir="${baskit.package.builds_dir}">
-		<include name="*.phar"/>
-	    </fileset>
-	</copy>
     </target>
     <target name="build_deb">
 	<mkdir dir="${baskit.package.builds_dir}"/>
@@ -108,7 +69,13 @@ License: Apache-2.0
 
 # Please also look if there are files or directories which have a
 # different copyright/license attached and list them here.]]></echo>
-	<echo file="${baskit.package.builds_dir}/deb/debian/changelog"><![CDATA[baskit (1.0.1-1) unstable; urgency=low
+	<echo file="${baskit.package.builds_dir}/deb/debian/changelog"><![CDATA[baskit (1.0.2-1) unstable; urgency=low
+  * Removed Phar package
+  * Made baskit script copy package into parts dir
+
+ -- ${baskit.package.maintainer.name} <${baskit.package.maintainer.email}>  Tue, 06 Jul 2011 8:35:01 +0100
+
+baskit (1.0.1-1) unstable; urgency=low
 
   * Fixes to PEAR and Debian packaging
   * Minor Wordpress/Apache target fixes.

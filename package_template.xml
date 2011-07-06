@@ -49,6 +49,7 @@
 	    </dir> <!-- /phing -->
 	    <file role="script" baseinstalldir="/" name="baskit">
 		<tasks:replace from="${data_dir}" to="data_dir" type="pear-config" />
+		<tasks:replace from="${php_dir}" to="php_dir" type="pear-config" />
 	    </file>
 	    <file role="doc" baseinstalldir="baskit" name="LICENSE"/>
 	    <file role="doc" baseinstalldir="baskit" name="README.md"/>

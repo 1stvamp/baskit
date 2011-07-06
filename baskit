@@ -4,7 +4,7 @@
  * baskit - sandboxed build environment for PHP, PEAR and Phing
  *
  * @package Baskit
- * @version 1.0.2
+ * @version 1.0.3
  * @author Wes Mason <wes.mason@isotoma.com>
  * @copyright 2011 Isotoma Limited
  * @license http://opensource.org/licenses/Apache-2.0 Apache License, Version 2.0
@@ -18,8 +18,10 @@ $var = $cwd . 'var/';
 $bin = $cwd . 'bin/';
 $cache = $cwd . 'download_cache/';
 
-$data_dir = $cwd; // For local checkout usage, overriden by PEAR installer
-$baskit_dir = "${data_dir}/baskit";
+$data_dir = $cwd; // For local checkout usage, overridden by PEAR installer
+$php_dir = $cwd; // For local checkout usage, overridden by PEAR installer
+$baskit_data_dir = "${data_dir}/baskit";
+$baskit_php_dir = "${php_dir}/baskit";
 
 // Create dynamic paths for environment
 if (!file_exists($parts)) {
@@ -133,7 +135,8 @@ function copy_directory($source, $destination) {
 // Make sure we're not bootstrapping baskit itself, or there's already a
 // locally checkout version.
 if (!file_exists("${cwd}baskit")) {
-    copy_directory($baskit_dir, "${parts}baskit");
+    copy_directory($baskit_data_dir, "${parts}baskit");
+    copy_directory($baskit_php_dir, "${parts}baskit");
     echo "baskit copied to ${parts}baskit" . PHP_EOL;
 }
 

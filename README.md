@@ -24,10 +24,10 @@ The requirements for _baskit_ are:
 
     # You probably want a specific version
     cd baskit
-    git checkout 1.0.0
+    git checkout 1.0.1
     cd ..
     git add baskit
-    git commit -m 'Switched to baskit 1.0.0'
+    git commit -m 'Switched to baskit 1.0.1'
 
 When you come to bootstrap your environment you would reference the `baskit` script as being in `baskit`,
 e.g. in your project base you would run `php baskit/baskit`.
@@ -71,37 +71,41 @@ If this doesn't work you may need to run from PHP:
 ### Using the phar installer
 To install system wide:
 
-    curl https://github.com/isotoma/baskit/downloads/baskit-1.0.0.phar | sudo php
+    curl -C - -O https://github.com/isotoma/baskit/downloads/baskit-1.0.1.phar
+    sudo php baskit-1.0.1.phar
 
 To install locally only, drop `sudo`:
 
-    curl https://github.com/isotoma/baskit/downloads/baskit-1.0.0.phar | php
+    curl -C - -O https://github.com/isotoma/baskit/downloads/baskit-1.0.1.phar
+    php baskit-1.0.1.phar
 
 ### Using the Debian/Ubuntu package
 
-    curl -C - -O https://github.com/isotoma/baskit/downloads/baskit-1.0.0_all.deb
-    sudo dpkg -i baskit-1.0.0_all.deb
+    curl -C - -O https://github.com/isotoma/baskit/downloads/baskit-1.0.1-1_all.deb
+    sudo dpkg -i baskit-1.0.1-1_all.deb
 
 ### Using the Fedora/Redhat/CentOS package
 
-    curl -C - -O https://github.com/isotoma/baskit/downloads/baskit-1.0.0.noarch.rpm
+    curl -C - -O https://github.com/isotoma/baskit/downloads/baskit-1.0.1.noarch.rpm
     sudo yum install baskit-1.0.0.noarch.rpm
 
 Usage
 -----
 To create a new environment run the `baskit` script in your project base dir, e.g.
-if you've copied in via Git or SVN:
-
-    php baskit/baskit
-
-Or installed via PEAR or the phar installer:
+if installed via PEAR or the phar installer:
 
     baskit
 
-Which will give you a `./bin` directory with scripts for PEAR and Phing:
+Or if you've copied in via Git or SVN:
+
+    php baskit/baskit
+
+
+Which will give you a `./bin` directory with scripts for PEAR, Phing and PHP:
 
     bin/pear version
     bin/phing -version
+    bin/php -v
     
     # This will install PEAR's Net_URL2 into the local build environment
     bin/pear install Net_URL2

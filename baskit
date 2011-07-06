@@ -18,8 +18,8 @@ $var = $cwd . 'var/';
 $bin = $cwd . 'bin/';
 $cache = $cwd . 'download_cache/';
 
-$baskit_dir = $cwd . 'baskit/'; // For local checkout usage, overriden below by PEAR installer
-##BASKIT_DIR##
+$data_dir = $cwd; // For local checkout usage, overriden by PEAR installer
+$baskit_dir = "${data_dir}/baskit";
 
 // Create dynamic paths for environment
 if (!file_exists($parts)) {
@@ -102,33 +102,38 @@ file_put_contents(
 chmod("${bin}php", 0755);
 echo 'Created bin/php' . PHP_EOL;
 
-$baskit_dir = realpath(dirname(__FILE__));
-if (!file_exists($baskit_dir)) {
-    symlink($baskit_dir, "${cwd}baskit");
-    echo 'Symlinked ./baskit to ' . $baskit_dir . PHP_EOL;
-}
-
 /**
  * Function to recursively copy a directory.
  */
-function rcopy($src, $dst) {
-    $files = scandir($src);
-    foreach ($files as $file) {
-        if (is_dir($src)) {
-            mkdir($dst);
-            if ($file != '.' && $file != '..') {
-                rcopy("$src/$file", "$dst/$file"); 
+function copy_directory($source, $destination) {
+    if ($source == '.' || $source == '..') {
+        return;
+    }
+    if (is_dir($source)) {
+        @mkdir($destination);
+        $directory = dir($source);
+        while (false !== ($read_directory = $directory->read())) {
+            if ($read_directory == '.' || $read_directory == '..') {
+                continue;
             }
-        } else if (file_exists($src)) {
-            copy($src, $dst);
+            $path_dir = $source . '/' . $read_directory;
+            if (is_dir($path_dir)) {
+                copy_directory($path_dir, $destination . '/' . $read_directory);
+                continue;
+            }
+            copy($path_dir, $destination . '/' . $read_directory);
         }
+ 
+        $directory->close();
+    } else {
+        copy($source, $destination);
     }
 }
 
 // Make sure we're not bootstrapping baskit itself, or there's already a
 // locally checkout version.
 if (!file_exists("${cwd}baskit")) {
-    rcopy($baskit_dir, "${parts}baskit");
+    copy_directory($baskit_dir, "${parts}baskit");
     echo "baskit copied to ${parts}baskit" . PHP_EOL;
 }
 

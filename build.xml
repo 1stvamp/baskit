@@ -80,7 +80,7 @@
 	<mkdir dir="${baskit.package.builds_output_dir}"/>
 	<mkdir dir="${baskit.package.builds_output_dir}/deb"/>
 	<exec
-	    command="echo 'xxxxxxxxxxxxxxxxxx' | dh_make -e ${baskit.package.maintainer.email} -f ../baskit-${baskit.package.version}.tgz -m -c apache -p baskit_${baskit.package.version}"
+	    command="echo 'xxxxxxxxxxxxxxxxxx' | dh_make --native -e ${baskit.package.maintainer.email} -f ../baskit-${baskit.package.version}.tgz -m -c apache -p baskit_${baskit.package.version}"
 	    dir="${baskit.package.builds_dir}/deb" />
 	<echo file="${baskit.package.builds_dir}/deb/debian/copyright"><![CDATA[Format: http://dep.debian.net/deps/dep5
 Upstream-Name: baskit
@@ -119,7 +119,7 @@ Homepage: https://github.com/isotoma/baskit
 #Vcs-Browser: https://github.com/isotoma/baskit
 
 Package: baskit
-Architecture: any
+Architecture: all
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: ${baskit.package.summary}
  baskit is a zc.buildout/virtualenv/rvm style sandboxed build environment for PHP, based on PEAR and Phing.
@@ -194,8 +194,14 @@ binary-arch: build install
 	dh_builddeb
 binary: binary-indep binary-arch
 .PHONY: build clean binary-indep binary-arch binary install configure]]></echo>
-	<copy file="${application.startdir}/package.xml" tofile="${baskit.package.builds_dir}/deb/package.xml"/>
-	<exec command="dpkg-buildpackage -rfakeroot --arch-all" dir="${baskit.package.builds_dir}/deb" />
+	<copy file="${application.startdir}/package.xml" tofile="${baskit.package.builds_dir}/deb/package.xml">
+	    <filterchain>
+		<replaceregexp>
+		    <regexp pattern="baskit\.h\.isotoma\.com" replace="pear.php.net"/>
+		</replaceregexp>
+	    </filterchain>
+	</copy>
+	<exec command="dpkg-buildpackage -A -rfakeroot" dir="${baskit.package.builds_dir}/deb" />
 	<copy todir="${baskit.package.builds_output_dir}/deb">
 	    <fileset dir="${baskit.package.builds_dir}">
 		<include name="*.deb"/>

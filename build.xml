@@ -72,7 +72,7 @@ License: Apache-2.0
 	<echo file="${baskit.package.builds_dir}/deb/debian/changelog"><![CDATA[baskit (1.0.3-1) unstable; urgency=low
   * Fixed Phing tasks not being copied into local env.
 
- -- ${baskit.package.maintainer.name} <${baskit.package.maintainer.email}>  Tue, 06 Jul 2011 10:29:0 +0100
+ -- ${baskit.package.maintainer.name} <${baskit.package.maintainer.email}>  Tue, 06 Jul 2011 10:29:00 +0100
 
 baskit (1.0.2-1) unstable; urgency=low
   * Removed Phar package

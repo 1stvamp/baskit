@@ -1,0 +1,21 @@
+Source: baskit
+Section: php
+Priority: extra
+Maintainer: ${baskit.package.maintainer.name} <${baskit.package.maintainer.email}>
+Build-Depends: debhelper (>= 7.0.50~), php-pear (>= 5.0.0~)
+Standards-Version: 3.9.1
+Homepage: https://github.com/isotoma/baskit
+#Vcs-Git: git://github.com/isotoma/baskit.git
+#Vcs-Browser: https://github.com/isotoma/baskit
+
+Package: baskit
+Architecture: all
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: ${baskit.package.summary}
+ baskit is a zc.buildout/virtualenv/rvm style sandboxed build environment for PHP, based on PEAR and Phing.
+ Using baskit you can create a build environment separate from your system, that uses your system installed PHP, but with it's own dependencies (e.g. specific versions of PEAR installable packages), and run automated build tasks against this environment with Phing.
+
+Package: baskit-doc
+Architecture: all
+Description: documentation for baskit
+ documentation for baskit

@@ -19,7 +19,7 @@
 	<mkdir dir="${baskit.package.builds_output_dir}"/>
 	<mkdir dir="${baskit.package.builds_output_dir}/pear"/>
 
-	<copy file="${application.startdir}/package_template.xml"
+	<copy file="${baskit.package.templates_dir}/package.xml"
 	    tofile="${application.startdir}/package.xml" overwrite="true">
             <filterchain>
                 <expandproperties />
@@ -43,146 +43,26 @@
 	<exec
 	    command="echo 'xxxxxxxxxxxxxxxxxx' | dh_make --native -e ${baskit.package.maintainer.email} -f ../baskit-${baskit.package.version}.tgz -m -c apache -p baskit_${baskit.package.version}"
 	    dir="${baskit.package.builds_dir}/deb" />
-	<echo file="${baskit.package.builds_dir}/deb/debian/copyright"><![CDATA[Format: http://dep.debian.net/deps/dep5
-Upstream-Name: baskit
-Source: https://github.com/isotoma/baskit
-
-Files: debian/*
-Copyright: 2011 Isotoma Limited
-License: Apache-2.0
-
-License: Apache-2.0
- Licensed under the Apache License, Version 2.0 (the "License");
- you may not use this file except in compliance with the License.
- You may obtain a copy of the License at
- .
- http://www.apache.org/licenses/LICENSE-2.0
- .
- Unless required by applicable law or agreed to in writing, software
- distributed under the License is distributed on an "AS IS" BASIS,
- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- See the License for the specific language governing permissions and
- limitations under the License.
- .
- On Debian systems, the complete text of the Apache version 2.0 license
- can be found in "/usr/share/common-licenses/Apache-2.0".
-
-# Please also look if there are files or directories which have a
-# different copyright/license attached and list them here.]]></echo>
-	<echo file="${baskit.package.builds_dir}/deb/debian/changelog"><![CDATA[baskit (1.0.4-1) unstable; urgency=low
-  * Copying baskit to base dir rather than parts
-
- -- ${baskit.package.maintainer.name} <${baskit.package.maintainer.email}>  Tue, 06 Jul 2011 10:44:00 +0100
-
-baskit (1.0.3-1) unstable; urgency=low
-  * Fixed Phing tasks not being copied into local env.
-
- -- ${baskit.package.maintainer.name} <${baskit.package.maintainer.email}>  Tue, 06 Jul 2011 10:29:00 +0100
-
-baskit (1.0.2-1) unstable; urgency=low
-  * Removed Phar package
-  * Made baskit script copy package into parts dir
-
- -- ${baskit.package.maintainer.name} <${baskit.package.maintainer.email}>  Tue, 06 Jul 2011 8:35:01 +0100
-
-baskit (1.0.1-1) unstable; urgency=low
-
-  * Fixes to PEAR and Debian packaging
-  * Minor Wordpress/Apache target fixes.
-
- -- ${baskit.package.maintainer.name} <${baskit.package.maintainer.email}>  Tue, 06 Jul 2011 06:50:31 +0100
-
-baskit (1.0.0-1) unstable; urgency=low
-
-  * Initial release
-
- -- ${baskit.package.maintainer.name} <${baskit.package.maintainer.email}>  Tue, 05 Jul 2011 11:11:20 +0100]]></echo>
-	<echo file="${baskit.package.builds_dir}/deb/debian/control"><![CDATA[Source: baskit
-Section: php
-Priority: extra
-Maintainer: ${baskit.package.maintainer.name} <${baskit.package.maintainer.email}>
-Build-Depends: debhelper (>= 7.0.50~), php-pear (>= 5.0.0~)
-Standards-Version: 3.9.1
-Homepage: https://github.com/isotoma/baskit
-#Vcs-Git: git://github.com/isotoma/baskit.git
-#Vcs-Browser: https://github.com/isotoma/baskit
-
-Package: baskit
-Architecture: all
-Depends: ${shlibs:Depends}, ${misc:Depends}
-Description: ${baskit.package.summary}
- baskit is a zc.buildout/virtualenv/rvm style sandboxed build environment for PHP, based on PEAR and Phing.
- Using baskit you can create a build environment separate from your system, that uses your system installed PHP, but with it's own dependencies (e.g. specific versions of PEAR installable packages), and run automated build tasks against this environment with Phing.
-
-Package: baskit-doc
-Architecture: all
-Description: documentation for baskit
- documentation for baskit]]></echo>
-	<echo file="${baskit.package.builds_dir}/deb/debian/rules"><![CDATA[#!/usr/bin/make -f
-# IX custom script for making pear modules into debian package. you need to have php-pear installed first.
-PEAR ?= /usr/bin/pear
-# Your package name. Make sure it is consistent with other files.
-package = baskit
-configure: configure-stamp
-configure-stamp:
-	dh_testdir
-	touch configure-stamp
-	build: build-stamp
-	build-stamp: configure-stamp
-	dh_testdir
-	touch build-stamp
-clean:
-	dh_clean build-stamp configure-stamp
-install: build
-	dh_testdir
-	dh_testroot
-	dh_clean -k
-	dh_installdirs
-	# Add here commands to install the package into debian/package.
-	# if the script does not work test with this line and see error
-	$(PEAR) install -n -R debian/$(package) -f package.xml;
-	# remove unwanted pear files left by installation
-	rm -f debian/$(package)/usr/share/php/.filemap;
-	rm -f debian/$(package)/usr/share/php/.lock;
-	rm -rf debian/$(package)/usr/share/php/.channels;
-	rm -rf debian/$(package)/usr/share/php/.depdblock;
-	rm -rf debian/$(package)/usr/share/php/.depdb;
-	rm -rf debian/$(package)/usr/share/php/.registry/.channel.pecl.php.net;
-	rm -rf debian/$(package)/usr/share/php/.registry/.channel.__uri;
-	# remove duplicated files, these files are in /usr/share/doc/package
-	rm -rf debian/$(package)/usr/share/php/tests;
-	rm -rf debian/$(package)/usr/share/php/docs;
-	# remove created tmp dir
-	rm -rf debian/$(package)/tmp
-	# Build architecture-independent files here.
-binary-indep: build install
-	# We have nothing to do by default.
-	# Build architecture-dependent files here.
-	dh_testdir
-	dh_testroot
-	dh_installdocs
-	dh_installexamples
-	dh_installchangelogs
-	dh_compress
-	dh_fixperms
-	dh_installdeb
-	dh_gencontrol
-	dh_md5sums
-	dh_builddeb
-binary-arch: build install
-	dh_testdir
-	dh_testroot
-	dh_installdocs
-	dh_installexamples
-	dh_installchangelogs
-	dh_compress
-	dh_fixperms
-	dh_installdeb
-	dh_gencontrol
-	dh_md5sums
-	dh_builddeb
-binary: binary-indep binary-arch
-.PHONY: build clean binary-indep binary-arch binary install configure]]></echo>
+	<copy file="${baskit.package.templates_dir}/debian_copyright"
+	    tofile="${baskit.package.builds_dir}/deb/debian/copyright" overwrite="true">
+            <filterchain>
+                <expandproperties />
+            </filterchain>
+	</copy>
+	<copy file="${application.startdir}/CHANGELOG"
+	    tofile="${baskit.package.builds_dir}/deb/debian/changelog" overwrite="true"/>
+	<copy file="${baskit.package.templates_dir}/debian_control"
+	    tofile="${baskit.package.builds_dir}/deb/debian/control" overwrite="true">
+            <filterchain>
+                <expandproperties />
+            </filterchain>
+	</copy>
+	<copy file="${baskit.package.templates_dir}/debian_rules"
+	    tofile="${baskit.package.builds_dir}/deb/debian/rules" overwrite="true">
+            <filterchain>
+                <expandproperties />
+            </filterchain>
+	</copy>
 	<copy file="${application.startdir}/package.xml" tofile="${baskit.package.builds_dir}/deb/package.xml">
 	    <filterchain>
 		<replaceregexp>
@@ -208,84 +88,12 @@ binary: binary-indep binary-arch
         <mkdir dir="${userhome}/rpmbuild/SPECS"/>
         <mkdir dir="${userhome}/rpmbuild/SOURCES"/>
 	<copy file="${baskit.package.builds_dir}/baskit-${baskit.package.version}.tgz" todir="${userhome}/rpmbuild/SOURCES"/>
-	<echo file="${userhome}/rpmbuild/SPECS/baskit-${baskit.package.version}.spec"><![CDATA[%define peardir %(pear config-get php_dir 2> /dev/null || echo %{_datadir}/pear)
-%define xmldir  /var/lib/pear
-
-Summary: PEAR: Sandboxed build environment bootstrapping for PHP/PEAR/Phing
-Name: baskit
-Version: ${baskit.package.version}
-Release: 1
-License: Apache License, Version 2.0
-Group: Development/Libraries
-Source0: http://pear.h.isotoma.com/get/baskit-%{version}.tgz
-BuildRoot: %{_tmppath}/%{name}-%{version}-root-%(%{__id_u} -n)
-URL: http://pear.h.isotoma.com/package/baskit
-BuildRequires: PEAR >= 1.4.7
-
-BuildArch: noarch
-
-%description
-baskit is a zc.buildout/virtualenv/rvm style sandboxed build environment
-for PHP, based on PEAR and Phing.
-Using baskit you can create a build environment separate from your system,
-that uses your system installed PHP, but with it's own dependencies (e.g.
-specific versions of PEAR installable packages), and run automated build
-tasks against this environment with Phing.
- 
-
-
-%prep
-%setup -c -T
-pear -v -c pearrc \
-        -d php_dir=%{peardir} \
-        -d doc_dir=/docs \
-        -d bin_dir=%{_bindir} \
-        -d data_dir=%{peardir}/data \
-        -d test_dir=%{peardir}/tests \
-        -d ext_dir=%{_libdir} \
-        -s
-
-%build
-
-%install
-rm -rf %{buildroot}
-pear -c pearrc install --nodeps --packagingroot %{buildroot} %{SOURCE0}
-        
-# Clean up unnecessary files
-rm pearrc
-rm %{buildroot}/%{peardir}/.filemap
-rm %{buildroot}/%{peardir}/.lock
-rm -rf %{buildroot}/%{peardir}/.registry
-rm -rf %{buildroot}%{peardir}/.channels
-rm %{buildroot}%{peardir}/.depdb
-rm %{buildroot}%{peardir}/.depdblock
-
-mv %{buildroot}/docs .
-
-
-# Install XML package description
-mkdir -p %{buildroot}%{xmldir}
-tar -xzf %{SOURCE0} package.xml
-cp -p package.xml %{buildroot}%{xmldir}/baskit.xml
-
-%clean
-rm -rf %{buildroot}
-
-%post
-pear install --nodeps --soft --force --register-only %{xmldir}/baskit.xml
-mv %{_bindir}/baskit/baskit %{_bindir}/baskit
-
-%postun
-if [ "$1" -eq "0" ]; then
-    pear uninstall --nodeps --ignore-errors --register-only pear.h.isotoma.com/baskit
-fi
-
-%files
-%{_bindir}/baskit
-%defattr(-,root,root)
-%doc docs/baskit/*
-%{peardir}/*
-%{xmldir}/baskit.xml]]></echo>
+	<copy file="${baskit.package.templates_dir}/rpm_spec"
+	    tofile="${userhome}/rpmbuild/SPECS/baskit-${baskit.package.version}.spec" overwrite="true">
+            <filterchain>
+                <expandproperties />
+            </filterchain>
+	</copy>
 	<exec
 	    command="rpmbuild -bb --nodeps baskit-${baskit.package.version}.spec"
 	    dir="${userhome}/rpmbuild/SPECS"/>

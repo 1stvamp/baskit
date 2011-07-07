@@ -1,0 +1,65 @@
+#!/usr/bin/make -f
+# IX custom script for making pear modules into debian package. you need to have php-pear installed first.
+PEAR ?= /usr/bin/pear
+# Your package name. Make sure it is consistent with other files.
+package = baskit
+configure: configure-stamp
+configure-stamp:
+	dh_testdir
+	touch configure-stamp
+	build: build-stamp
+	build-stamp: configure-stamp
+	dh_testdir
+	touch build-stamp
+clean:
+	dh_clean build-stamp configure-stamp
+install: build
+	dh_testdir
+	dh_testroot
+	dh_clean -k
+	dh_installdirs
+	# Add here commands to install the package into debian/package.
+	# if the script does not work test with this line and see error
+	$(PEAR) install -n -R debian/$(package) -f package.xml;
+	# remove unwanted pear files left by installation
+	rm -f debian/$(package)/usr/share/php/.filemap;
+	rm -f debian/$(package)/usr/share/php/.lock;
+	rm -rf debian/$(package)/usr/share/php/.channels;
+	rm -rf debian/$(package)/usr/share/php/.depdblock;
+	rm -rf debian/$(package)/usr/share/php/.depdb;
+	rm -rf debian/$(package)/usr/share/php/.registry/.channel.pecl.php.net;
+	rm -rf debian/$(package)/usr/share/php/.registry/.channel.__uri;
+	# remove duplicated files, these files are in /usr/share/doc/package
+	rm -rf debian/$(package)/usr/share/php/tests;
+	rm -rf debian/$(package)/usr/share/php/docs;
+	# remove created tmp dir
+	rm -rf debian/$(package)/tmp
+	# Build architecture-independent files here.
+binary-indep: build install
+	# We have nothing to do by default.
+	# Build architecture-dependent files here.
+	dh_testdir
+	dh_testroot
+	dh_installdocs
+	dh_installexamples
+	dh_installchangelogs
+	dh_compress
+	dh_fixperms
+	dh_installdeb
+	dh_gencontrol
+	dh_md5sums
+	dh_builddeb
+binary-arch: build install
+	dh_testdir
+	dh_testroot
+	dh_installdocs
+	dh_installexamples
+	dh_installchangelogs
+	dh_compress
+	dh_fixperms
+	dh_installdeb
+	dh_gencontrol
+	dh_md5sums
+	dh_builddeb
+binary: binary-indep binary-arch
+.PHONY: build clean binary-indep binary-arch binary install configure

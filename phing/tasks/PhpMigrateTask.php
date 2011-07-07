@@ -53,6 +53,10 @@ class PhpMigrateTask extends DbDeployTask {
 		    'set_include_path("' . get_include_path() . '");',
 		);
 		foreach($files as $fileChangeNumber => $fileName) {
+                    if (strpos($fileName, '.php') != strlen($fileName)-4) {
+                        // Skip non-php files
+                        continue;
+                    }
 		    // Load file content
 		    $contents = file_get_contents($this->dir . '/' . $fileName);
 		    // Replace "function migrate(" with "function migrate_$fileChangeNumber("

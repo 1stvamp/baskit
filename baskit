@@ -30,7 +30,7 @@ if (PEAR::isError($ret)) {
 
 // Defaults
 $baskit_version = null; // This version
-$channel = null; // No channel override
+$default_channel = null; // No channel override
 
 $opts = $ret[0]; 
 if (sizeof($opts) > 0) { 
@@ -45,7 +45,7 @@ if (sizeof($opts) > 0) {
             case 'c':
             case '--channel':
 		if ($o[1]) {
-		    $channel = $o[1];
+		    $default_channel = $o[1];
 		}
                 break;
         } 
@@ -66,7 +66,7 @@ $baskit_data_dir = "${data_dir}/baskit";
 $baskit_php_dir = "${php_dir}/baskit";
 
 // Get current version from build properties
-$build_properties = parse_ini_file($cwd . 'build.properties');
+$build_properties = parse_ini_file(dirname(__FILE__) . '/build.properties');
 $current_version = trim($build_properties['baskit.package.version']);
 
 // Create dynamic paths for environment

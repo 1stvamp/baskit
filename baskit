@@ -38,15 +38,15 @@ if (sizeof($opts) > 0) {
         switch ($o[0]) { 
             case 'b':
             case '--baskitversion':
-		if ($o[1]) {
-		    $baskit_version = $o[1];
-		}
+                if ($o[1]) {
+                    $baskit_version = $o[1];
+                }
                 break;
             case 'c':
             case '--channel':
-		if ($o[1]) {
-		    $default_channel = $o[1];
-		}
+                if ($o[1]) {
+                    $default_channel = $o[1];
+                }
                 break;
         } 
     } 
@@ -71,27 +71,27 @@ $current_version = trim($build_properties['baskit.package.version']);
 
 // Create dynamic paths for environment
 if (!file_exists($parts)) {
-        mkdir($parts);
-        echo "Created ${parts}" . PHP_EOL;
+    mkdir($parts);
+    echo "Created ${parts}" . PHP_EOL;
 }
 if (!file_exists($bin)) {
-        mkdir($bin);
-        echo "Created ${bin}" . PHP_EOL;
+    mkdir($bin);
+    echo "Created ${bin}" . PHP_EOL;
 }
 if (!file_exists($cache)) {
-        mkdir($cache);
-        echo "Created ${cache}" . PHP_EOL;
+    mkdir($cache);
+    echo "Created ${cache}" . PHP_EOL;
 }
 if (!file_exists($var)) {
-        mkdir($var);
-        echo "Created ${var}" . PHP_EOL;
+    mkdir($var);
+    echo "Created ${var}" . PHP_EOL;
 }
 
 // Move any existing ~/.pearrc out of the way, temporarily
 $moved_rc = false;
 if (file_exists("${home}.pearrc")) {
-        rename("${home}.pearrc", "${home}.pearrc_");
-        $moved_rc = true;
+    rename("${home}.pearrc", "${home}.pearrc_");
+    $moved_rc = true;
 }
 
 // Use the system isntalled PEAR to generate a local copy
@@ -103,11 +103,11 @@ echo implode(PHP_EOL, $out) . PHP_EOL;
 rename("${home}.pearrc", "${cwd}.pearrc");
 
 if ($moved_rc) {
-        rename("${home}.pearrc_", "${home}.pearrc");
+    rename("${home}.pearrc_", "${home}.pearrc");
 }
 
 if (file_exists("${bin}pear")) {
-        unlink("${bin}pear");
+    unlink("${bin}pear");
 }
 // Create a wrapper around the local PEAR to reference the right .pearrc
 // in the project path rather than looking in $HOME
@@ -116,16 +116,20 @@ chmod("${bin}pear", 0755);
 echo 'Created bin/pear' . PHP_EOL;
 
 // Make local pear aware of baskit's PEAR channel
-exec("${bin}pear channel-discover baskit.h.isotoma.com 2>&1", $out);
+$channel = $default_channel ? $default_channel : 'baskit.h.isotoma.com';
+exec("${bin}pear channel-discover ${channel} 2>&1", $out);
 echo implode(PHP_EOL, $out) . PHP_EOL;
 
 // Install Phing locally and wrap it's script
-exec("${bin}pear channel-discover pear.phing.info 2>&1", $out);
+if (!$default_channel) {
+    exec("${bin}pear channel-discover pear.phing.info 2>&1", $out);
+}
 echo implode(PHP_EOL, $out) . PHP_EOL;
-exec("${bin}pear install phing/phing 2>&1", $out);
+$channel = $default_channel ? $default_channel : 'phing';
+exec("${bin}pear install ${channel}/phing 2>&1", $out);
 echo implode(PHP_EOL, $out) . PHP_EOL;
 if (file_exists("${bin}phing")) {
-        unlink("${bin}phing");
+    unlink("${bin}phing");
 }
 copy("${parts}pear/phing", "${bin}phing");
 $phing_bin = file_get_contents("${bin}phing");
@@ -189,7 +193,8 @@ if (!file_exists("${cwd}baskit") && !is_file("${cwd}baskit")) {
         echo "baskit copied to ${cwd}baskit" . PHP_EOL;
     } else {
         // PEAR install and symlink specified version
-        exec("${bin}pear install baskit/baskit-${baskit_version} 2>&1", $out);
+        $channel = $default_channel ? $default_channel : 'baskit';
+        exec("${bin}pear install ${channel}/baskit-${baskit_version} 2>&1", $out);
         echo implode(PHP_EOL, $out) . PHP_EOL;
         symlink("${parts}baskit", "${cwd}baskit");
         echo "baskit-${baskit_version} symlinked to ${cwd}baskit" . PHP_EOL;

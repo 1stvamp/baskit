@@ -10,6 +10,48 @@
  * @license http://opensource.org/licenses/Apache-2.0 Apache License, Version 2.0
  */
 
+/**
+ * PEAR::Console_GetOpt
+ */
+require 'Console/Getopt.php';
+//
+// Read the command line 
+$cg = new Console_Getopt(); 
+$args = $cg->readPHPArgv(); 
+
+// Get the options 
+$ret = $cg->getopt($args, 'b:c:', array('baskitversion=', 'channel=')); 
+
+// Check for errors and die with an error message if there was a problem 
+if (PEAR::isError($ret)) { 
+    echo 'Error in command line: ' . $ret->getMessage() . PHP_EOL;
+    exit(1);
+} 
+
+// Defaults
+$baskit_version = null; // This version
+$channel = null; // No channel override
+
+$opts = $ret[0]; 
+if (sizeof($opts) > 0) { 
+    foreach ($opts as $o) { 
+        switch ($o[0]) { 
+            case 'b':
+            case '--baskitversion':
+		if ($o[1]) {
+		    $baskit_version = $o[1];
+		}
+                break;
+            case 'c':
+            case '--channel':
+		if ($o[1]) {
+		    $channel = $o[1];
+		}
+                break;
+        } 
+    } 
+}
+
 // Setup all the paths
 $home = getenv('HOME') . '/';
 $cwd = getcwd() . '/';
@@ -22,6 +64,10 @@ $data_dir = $cwd; // For local checkout usage, overridden by PEAR installer
 $php_dir = $cwd; // For local checkout usage, overridden by PEAR installer
 $baskit_data_dir = "${data_dir}/baskit";
 $baskit_php_dir = "${php_dir}/baskit";
+
+// Get current version from build properties
+$build_properties = parse_ini_file($cwd . 'build.properties');
+$current_version = trim($build_properties['baskit.package.version']);
 
 // Create dynamic paths for environment
 if (!file_exists($parts)) {
@@ -135,9 +181,19 @@ function copy_directory($source, $destination) {
 // Make sure we're not bootstrapping baskit itself, or there's already a
 // locally checkout version.
 if (!file_exists("${cwd}baskit") && !is_file("${cwd}baskit")) {
-    copy_directory($baskit_data_dir, "${cwd}baskit");
-    copy_directory($baskit_php_dir, "${cwd}baskit");
-    echo "baskit copied to ${cwd}baskit" . PHP_EOL;
+    // Are we installing a specific version?
+    // Or is thst version the same as this one?
+    if (!$baskit_version || $baskit_version == $current_version) {
+        copy_directory($baskit_data_dir, "${cwd}baskit");
+        copy_directory($baskit_php_dir, "${cwd}baskit");
+        echo "baskit copied to ${cwd}baskit" . PHP_EOL;
+    } else {
+        // PEAR install and symlink specified version
+        exec("${bin}pear install baskit/baskit-${baskit_version} 2>&1", $out);
+        echo implode(PHP_EOL, $out) . PHP_EOL;
+        symlink("${parts}baskit", "${cwd}baskit");
+        echo "baskit-${baskit_version} symlinked to ${cwd}baskit" . PHP_EOL;
+    }
 }
 
 echo 'Done.' . PHP_EOL;

@@ -1,3 +1,12 @@
+baskit (1.0.5-1) unstable; urgency=low
+  * Added version pinning and channel overriding.
+  * Fixed PHP migrations Phing task including non-PHP files.
+  * Added this changelog to project base.
+  * Moved build templates into build_templates dir from build.xml.
+  * Added Phing version pinning and version pinning from project properties.
+
+ -- Wes Mason <wes.mason@isotoma.com>  Thu, 21 Jul 2011 12:00:00 +0100
+
 baskit (1.0.4-1) unstable; urgency=low
   * Copying baskit to base dir rather than parts
 

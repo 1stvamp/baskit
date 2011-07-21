@@ -24,10 +24,10 @@ The requirements for _baskit_ are:
 
     # You probably want a specific version
     cd baskit
-    git checkout 1.0.4
+    git checkout 1.0.5
     cd ..
     git add baskit
-    git commit -m 'Switched to baskit 1.0.4'
+    git commit -m 'Switched to baskit 1.0.5'
 
 When you come to bootstrap your environment you would reference the `baskit` script as being in `baskit`,
 e.g. in your project base you would run `php baskit/baskit`.
@@ -70,12 +70,12 @@ If this doesn't work you may need to run from PHP:
 
 ### Using the Debian/Ubuntu package
 
-    curl -C - -O https://github.com/isotoma/baskit/downloads/baskit-1.0.4-1_all.deb
-    sudo dpkg -i baskit-1.0.4-1_all.deb
+    curl -C - -O https://github.com/isotoma/baskit/downloads/baskit-1.0.5-1_all.deb
+    sudo dpkg -i baskit-1.0.5-1_all.deb
 
 ### Using the Fedora/Redhat/CentOS package
 
-    curl -C - -O https://github.com/isotoma/baskit/downloads/baskit-1.0.4.noarch.rpm
+    curl -C - -O https://github.com/isotoma/baskit/downloads/baskit-1.0.5.noarch.rpm
     sudo yum install baskit-1.0.0.noarch.rpm
 
 Usage

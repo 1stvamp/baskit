@@ -14,6 +14,19 @@
  * PEAR::Console_GetOpt
  */
 require 'Console/Getopt.php';
+
+// Setup all the paths
+$home = getenv('HOME') . '/';
+$cwd = getcwd() . '/';
+$parts = $cwd . 'parts/';
+$var = $cwd . 'var/';
+$bin = $cwd . 'bin/';
+$cache = $cwd . 'download_cache/';
+
+$data_dir = $cwd; // For local checkout usage, overridden by PEAR installer
+$php_dir = $cwd; // For local checkout usage, overridden by PEAR installer
+$baskit_data_dir = "${data_dir}/baskit";
+$baskit_php_dir = "${php_dir}/baskit";
 //
 // Read the command line 
 $cg = new Console_Getopt(); 
@@ -31,7 +44,23 @@ if (PEAR::isError($ret)) {
 // Defaults
 $baskit_version = null; // This version
 $default_channel = null; // No channel override
+$phing_version = null;
 
+// Check for these values in the *project* build properties
+if (file_exists($cwd . 'build.properties')) {
+    $project_build_properties = parse_ini_file($cwd . 'build.properties');
+    if (isset($project_build_properties['baskit.version'])) {
+        $baskit_version = $project_build_properties['baskit.version'];
+    }
+    if (isset($project_build_properties['baskit.channel'])) {
+        $default_channel = $project_build_properties['baskit.channel'];
+    }
+    if (isset($project_build_properties['baskit.phing.version'])) {
+        $phing_version = $project_build_properties['baskit.phing.version'];
+    }
+}
+
+// Options from command line override project properties
 $opts = $ret[0]; 
 if (sizeof($opts) > 0) { 
     foreach ($opts as $o) { 
@@ -40,6 +69,12 @@ if (sizeof($opts) > 0) {
             case '--baskitversion':
                 if ($o[1]) {
                     $baskit_version = $o[1];
+                }
+                break;
+            case 'p':
+            case '--phingversion':
+                if ($o[1]) {
+                    $phing_version = $o[1];
                 }
                 break;
             case 'c':
@@ -51,19 +86,6 @@ if (sizeof($opts) > 0) {
         } 
     } 
 }
-
-// Setup all the paths
-$home = getenv('HOME') . '/';
-$cwd = getcwd() . '/';
-$parts = $cwd . 'parts/';
-$var = $cwd . 'var/';
-$bin = $cwd . 'bin/';
-$cache = $cwd . 'download_cache/';
-
-$data_dir = $cwd; // For local checkout usage, overridden by PEAR installer
-$php_dir = $cwd; // For local checkout usage, overridden by PEAR installer
-$baskit_data_dir = "${data_dir}/baskit";
-$baskit_php_dir = "${php_dir}/baskit";
 
 // Get current version from build properties
 $build_properties = parse_ini_file(dirname(__FILE__) . '/build.properties');
@@ -125,9 +147,13 @@ if (!$default_channel) {
     exec("${bin}pear channel-discover pear.phing.info 2>&1", $out);
 }
 echo implode(PHP_EOL, $out) . PHP_EOL;
+
 $channel = $default_channel ? $default_channel : 'phing';
-exec("${bin}pear install ${channel}/phing 2>&1", $out);
+$phing_install_version = $phing_version ? '-' . $phing_version : '';
+
+exec("${bin}pear install ${channel}/phing${phing_install_version} 2>&1", $out);
 echo implode(PHP_EOL, $out) . PHP_EOL;
+
 if (file_exists("${bin}phing")) {
     unlink("${bin}phing");
 }

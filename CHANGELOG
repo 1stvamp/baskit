@@ -1,7 +1,7 @@
 baskit (1.0.6-1) stable; urgency=low
   * Fixed bug in PHP migration script that would cause all migrations to be run.
 
- -- Wes Mason <wes.mason@isotoma.com>  Thu, 18 Aug 2011 09:38:052 +0100
+ -- Wes Mason <wes.mason@isotoma.com>  Thu, 18 Aug 2011 09:38:52 +0100
 
 baskit (1.0.5-1) unstable; urgency=low
   * Added version pinning and channel overriding.

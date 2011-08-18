@@ -1,3 +1,8 @@
+baskit (1.0.7-1) stable; urgency=low
+  * Fixed bug in PHP migration script that would cause last revision to always be 0.
+
+ -- Wes Mason <wes.mason@isotoma.com>  Thu, 18 Aug 2011 10:08:01 +0100
+
 baskit (1.0.6-1) stable; urgency=low
   * Fixed bug in PHP migration script that would cause all migrations to be run.
 

@@ -53,7 +53,7 @@ class PhpMigrateTask extends DbDeployTask {
 		    'set_include_path("' . get_include_path() . '");',
 		);
 		foreach($files as $fileChangeNumber => $fileName) {
-                    if (strpos($fileName, '.php') != (strlen($fileName)-4)
+                    if (strpos($fileName, '.php') === (strlen($fileName)-4)
                       && $fileChangeNumber > $lastChangeAppliedInDb
                       && $fileChangeNumber <= $this->lastChangeToApply) {
                         // Load file content

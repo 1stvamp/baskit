@@ -30,8 +30,9 @@ class PhpMigrateTask extends DbDeployTask {
 	    $this->dbmsSyntax = $dbmsSyntaxFactory->getDbmsSyntax();
 
 	    // Figure out which revisions are in the db already
+	    $lastChangeAppliedInDb = $this->getLastChangeAppliedInDb();     
 	    $this->appliedChangeNumbers = $this->getAppliedChangeNumbers();
-	    $this->log('Current db revision: ' . $this->getLastChangeAppliedInDb());
+	    $this->log('Current db revision: ' . $lastChangeAppliedInDb);
 
 	    // Generate sql file needed to take db to "lastChangeToApply" version
 	    $deploySql = $this->doDeploy();
@@ -39,7 +40,6 @@ class PhpMigrateTask extends DbDeployTask {
 	    $undoSql = $this->undoDeploy();
 	    file_put_contents($this->undoOutputFile . '.sql', $undoSql);
 
-	    $lastChangeAppliedInDb = $this->getLastChangeAppliedInDb();     
 	    $files = $this->getDeltasFilesArray();
 	    if (count($files)) {
 		ksort($files);
@@ -53,10 +53,9 @@ class PhpMigrateTask extends DbDeployTask {
 		    'set_include_path("' . get_include_path() . '");',
 		);
 		foreach($files as $fileChangeNumber => $fileName) {
-                    if (strpos($fileName, '.php') != strlen($fileName)-4) {
-                        // Skip non-php files
-                        continue;
-                    } else if ($fileChangeNumber > $lastChangeAppliedInDb && $fileChangeNumber <= $this->lastChangeToApply) {
+                    if (strpos($fileName, '.php') != (strlen($fileName)-4)
+                      && $fileChangeNumber > $lastChangeAppliedInDb
+                      && $fileChangeNumber <= $this->lastChangeToApply) {
                         // Load file content
                         $contents = file_get_contents($this->dir . '/' . $fileName);
                         // Replace "function migrate(" with "function migrate_$fileChangeNumber("

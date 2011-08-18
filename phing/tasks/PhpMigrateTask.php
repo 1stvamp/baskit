@@ -56,21 +56,22 @@ class PhpMigrateTask extends DbDeployTask {
                     if (strpos($fileName, '.php') != strlen($fileName)-4) {
                         // Skip non-php files
                         continue;
+                    } else if ($fileChangeNumber > $lastChangeAppliedInDb && $fileChangeNumber <= $this->lastChangeToApply) {
+                        // Load file content
+                        $contents = file_get_contents($this->dir . '/' . $fileName);
+                        // Replace "function migrate(" with "function migrate_$fileChangeNumber("
+                        $contents = preg_replace('/function\s+migrate\s*\(/', 'function migrate_' . $fileChangeNumber . '(', $contents);
+                        // Replace "function undo(" with "function undo_$fileChangeNumber("
+                        $contents = preg_replace('/function\s+undo\s*\(/', 'function undo_' . $fileChangeNumber . '(', $contents);
+                        // Replace any instance of '<?php' with ''
+                        $contents = str_replace('<?php', '', $contents);
+                        /* Replace any instance of '?>' with '' */
+                        $contents = str_replace('?>', '', $contents);
+                        // Concat modified contents
+                        $output[] = $contents;
+                        $calls['migrate'][] = 'migrate_' . $fileChangeNumber . '();';
+                        $calls['undo'][] = 'undo_' . $fileChangeNumber . '();';
                     }
-		    // Load file content
-		    $contents = file_get_contents($this->dir . '/' . $fileName);
-		    // Replace "function migrate(" with "function migrate_$fileChangeNumber("
-		    $contents = preg_replace('/function\s+migrate\s*\(/', 'function migrate_' . $fileChangeNumber . '(', $contents);
-		    // Replace "function undo(" with "function undo_$fileChangeNumber("
-		    $contents = preg_replace('/function\s+undo\s*\(/', 'function undo_' . $fileChangeNumber . '(', $contents);
-		    // Replace any instance of '<?php' with ''
-		    $contents = str_replace('<?php', '', $contents);
-		    /* Replace any instance of '?>' with '' */
-		    $contents = str_replace('?>', '', $contents);
-		    // Concat modified contents
-		    $output[] = $contents;
-		    $calls['migrate'][] = 'migrate_' . $fileChangeNumber . '();';
-		    $calls['undo'][] = 'undo_' . $fileChangeNumber . '();';
 		}
 		// Generate single migrate() and undo() calls that reference above calls
 		$migrate = "\nfunction migrate() {\n";

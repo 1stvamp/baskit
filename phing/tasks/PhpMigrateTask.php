@@ -30,8 +30,8 @@ class PhpMigrateTask extends DbDeployTask {
 	    $this->dbmsSyntax = $dbmsSyntaxFactory->getDbmsSyntax();
 
 	    // Figure out which revisions are in the db already
-	    $lastChangeAppliedInDb = $this->getLastChangeAppliedInDb();     
 	    $this->appliedChangeNumbers = $this->getAppliedChangeNumbers();
+	    $lastChangeAppliedInDb = $this->getLastChangeAppliedInDb();     
 	    $this->log('Current db revision: ' . $lastChangeAppliedInDb);
 
 	    // Generate sql file needed to take db to "lastChangeToApply" version

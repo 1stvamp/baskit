@@ -43,7 +43,7 @@ e.g. in your project base you would run `php baskit/baskit`.
 **Caveat emptor**: Because this is a checkout from Github's SVN mirroring service, there is no support for pinning to
 branches or tags, so using this you'd be stuck with whatever is at `HEAD`.
 
-You *can* pin the external to a specific comit in the Github virtual SVN repo, e.g.:
+You *can* pin the external to a specific commit in the Github virtual SVN repo, e.g.:
 
     baskit -r 100 https://svn.github.com/isotoma/baskit.git
 

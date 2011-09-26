@@ -4,9 +4,9 @@ Priority: extra
 Maintainer: ${baskit.package.maintainer.name} <${baskit.package.maintainer.email}>
 Build-Depends: debhelper (>= 7.0.50~), php-pear (>= 5.0.0~)
 Standards-Version: 3.9.1
-Homepage: https://github.com/isotoma/baskit
-#Vcs-Git: git://github.com/isotoma/baskit.git
-#Vcs-Browser: https://github.com/isotoma/baskit
+Homepage: https://github.com/1stvamp/baskit
+#Vcs-Git: git://github.com/1stvamp/baskit.git
+#Vcs-Browser: https://github.com/1stvamp/baskit
 
 Package: baskit
 Architecture: all

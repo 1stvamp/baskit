@@ -16,16 +16,16 @@
 
 // ** MySQL settings - You can get this info from your web host ** //
 /** The name of the database for WordPress */
-define('DB_NAME', '${isotoma.db.database}');
+define('DB_NAME', '${baskit.db.database}');
 
 /** MySQL database username */
-define('DB_USER', '${isotoma.db.username}');
+define('DB_USER', '${baskit.db.username}');
 
 /** MySQL database password */
-define('DB_PASSWORD', '${isotoma.db.password}');
+define('DB_PASSWORD', '${baskit.db.password}');
 
 /** MySQL hostname */
-define('DB_HOST', '${isotoma.db.host}');
+define('DB_HOST', '${baskit.db.host}');
 
 /** Database Charset to use in creating database tables. */
 define('DB_CHARSET', 'utf8');

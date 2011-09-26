@@ -4,8 +4,8 @@
  *
  * @package Baskit
  * @version 1.0.0
- * @author Wes Mason <wes.mason@isotoma.com>
- * @copyright 2011 Isotoma Limited
+ * @author Wes Mason <wes@1stvamp.org>
+ * @copyright 2011 Wesley Aaron Mason
  * @license http://opensource.org/licenses/Apache-2.0 Apache License, Version 2.0
  */
 

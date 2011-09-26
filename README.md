@@ -1,7 +1,7 @@
 baskit - PHP Build Environment
 ==============================
 
-![baskit logo](http://baskit.h.isotoma.com/baskit.png)
+![baskit logo](http://1stvamp.org/pics/baskit.png)
 
 About
 -----
@@ -19,7 +19,7 @@ The requirements for _baskit_ are:
 
 ### Using Git submodules
 
-    git submodule add https://github.com/isotoma/baskit.git baskit
+    git submodule add https://github.com/1stvamp/baskit.git baskit
     git commit -m 'Added baskit'
 
     # You probably want a specific version
@@ -35,7 +35,7 @@ e.g. in your project base you would run `php baskit/baskit`.
 ### Using Subversion externals
 
     svn propget svn:externals . > /tmp/baskit_svn_externals
-    echo "baskit https://svn.github.com/isotoma/baskit.git" >> /tmp/baskit_svn_externals
+    echo "baskit https://svn.github.com/1stvamp/baskit.git" >> /tmp/baskit_svn_externals
     svn propset svn:externals -F /tmp/baskit_svn_externals
     svn ci -m 'Added baskit'
     svn up
@@ -45,19 +45,19 @@ branches or tags, so using this you'd be stuck with whatever is at `HEAD`.
 
 You *can* pin the external to a specific commit in the Github virtual SVN repo, e.g.:
 
-    baskit -r 100 https://svn.github.com/isotoma/baskit.git
+    baskit -r 100 https://svn.github.com/1stvamp/baskit.git
 
 However you'll have to work out which commit to pin to yourself as it would be very difficult to update this document every release with the correct revision reported by svn.github.com.
 
 ### Using PEAR
 To install using system installed PEAR:
 
-    sudo pear channel-discover baskit.h.isotoma.com
+    sudo pear channel-discover baskit.1stvamp.net
     sudo pear install baskit/baskit
 
 To install locally only, drop `sudo`:
 
-    pear channel-discover baskit.h.isotoma.com
+    pear channel-discover baskit.1stvamp.net
     pear install baskit/baskit
 
 Then you should be able to run from anywhere as a system command:
@@ -70,12 +70,12 @@ If this doesn't work you may need to run from PHP:
 
 ### Using the Debian/Ubuntu package
 
-    curl -C - -O https://github.com/isotoma/baskit/downloads/baskit-1.0.8-1_all.deb
+    curl -C - -O https://github.com/1stvamp/baskit/downloads/baskit-1.0.8-1_all.deb
     sudo dpkg -i baskit-1.0.8-1_all.deb
 
 ### Using the Fedora/Redhat/CentOS package
 
-    curl -C - -O https://github.com/isotoma/baskit/downloads/baskit-1.0.8.noarch.rpm
+    curl -C - -O https://github.com/1stvamp/baskit/downloads/baskit-1.0.8.noarch.rpm
     sudo yum install baskit-1.0.0.noarch.rpm
 
 Usage
@@ -123,7 +123,7 @@ Building baskit yourself
 --------------------------
 _baskit_ can be installed via a number of different packaging forms, as well as used directly from the PHP/XML source, to generate these packages yourself (such as the PEAR package or RPM) you can use _baskit_ to bootstrap and build itself from a checkout:
 
-    git checkout https://github.com/isotoma/baskit.git
+    git checkout https://github.com/1stvamp/baskit.git
     cd baskit
     ./baskit
     bin/phing

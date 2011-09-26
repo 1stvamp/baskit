@@ -66,7 +66,7 @@
 	<copy file="${application.startdir}/package.xml" tofile="${baskit.package.builds_dir}/deb/package.xml">
 	    <filterchain>
 		<replaceregexp>
-		    <regexp pattern="baskit\.h\.isotoma\.com" replace="pear.php.net"/>
+		    <regexp pattern="baskit\.1stvamp\.net" replace="pear.php.net"/>
 		</replaceregexp>
 	    </filterchain>
 	</copy>

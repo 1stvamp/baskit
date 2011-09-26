@@ -5,8 +5,8 @@
  *
  * @package Baskit
  * @version 1.0.4
- * @author Wes Mason <wes.mason@isotoma.com>
- * @copyright 2011 Isotoma Limited
+ * @author Wes Mason <wes@1stvamp.org
+ * @copyright 2011 Wesley Aaron Mason
  * @license http://opensource.org/licenses/Apache-2.0 Apache License, Version 2.0
  */
 
@@ -138,7 +138,7 @@ chmod("${bin}pear", 0755);
 echo 'Created bin/pear' . PHP_EOL;
 
 // Make local pear aware of baskit's PEAR channel
-$channel = $default_channel ? $default_channel : 'baskit.h.isotoma.com';
+$channel = $default_channel ? $default_channel : 'baskit.1stvamp.net';
 exec("${bin}pear channel-discover ${channel} 2>&1", $out);
 echo implode(PHP_EOL, $out) . PHP_EOL;
 

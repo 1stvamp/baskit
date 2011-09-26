@@ -6,8 +6,8 @@
  *
  * @package Baskit
  * @version 1.0.1
- * @author Wes Mason <wes.mason@isotoma.com>
- * @copyright 2011 Isotoma Limited
+ * @author Wes Mason <wes@1stvamp.org>
+ * @copyright 2011 Wesley Aaron Mason
  * @license http://opensource.org/licenses/Apache-2.0 Apache License, Version 2.0
  */
 
@@ -38,8 +38,8 @@ EOT;
     $_POST['admin_email'] = <<<EOT
 ${wordpress.site.admin_email}
 EOT;
-    function isotoma_array_walk_trim(&$item) { trim($item); }
-    array_walk($_POST, 'isotoma_array_walk_trim');
+    function baskit_array_walk_trim(&$item) { trim($item); }
+    array_walk($_POST, 'baskit_array_walk_trim');
 
     ob_start();
     require '${wp_dest}/wp-admin/install.php';

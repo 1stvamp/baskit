@@ -11,6 +11,6 @@
                 <expandproperties />
             </filterchain>
 	</copy>
-        <echo>Generated ${isotoma.vardir}/apache/vhost.conf</echo>
+        <echo>Generated ${baskit.vardir}/apache/vhost.conf</echo>
     </target>
 </project>

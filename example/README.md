@@ -9,9 +9,9 @@ To bootstrap the build environment and build the project:
     cd example
     php ../baskit
     
-    # Let's symlink the isotoma directory which contains common baskit tasks and targets
+    # Let's symlink baskit's phing directory which contains common baskit tasks and targets
     # you could also cp this in, but I'm avoiding the clutter for the example project.
-    ln -s ../isotoma ./isotoma
+    ln -s ../phing ./phing
 
     # Build the project with Phing
     bin/phing
@@ -33,5 +33,5 @@ sure the database settings in `build.properties` (_baskit.db.*_) are correct, an
 the following Phing target call in `build.xml`:
 
     <!-- Run DB migrations -->
-    <phing phingfile="isotoma/targets/migrations.xml" inheritRefs="true" target="migrate"/>
+    <phing phingfile="phing/targets/migrations.xml" inheritRefs="true" target="migrate"/>
 

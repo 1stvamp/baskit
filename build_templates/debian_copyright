@@ -1,9 +1,9 @@
 Format: http://dep.debian.net/deps/dep5
 Upstream-Name: baskit
-Source: https://github.com/isotoma/baskit
+Source: https://github.com/1stvamp/baskit
 
 Files: debian/*
-Copyright: 2011 Isotoma Limited
+Copyright: 2011 Wesley Aaron Mason
 License: Apache-2.0
 
 License: Apache-2.0

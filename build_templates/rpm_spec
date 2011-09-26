@@ -7,9 +7,9 @@ Version: ${baskit.package.version}
 Release: 1
 License: Apache License, Version 2.0
 Group: Development/Libraries
-Source0: http://pear.h.isotoma.com/get/baskit-%{version}.tgz
+Source0: http://baskit.1stvamp.net/get/baskit-%{version}.tgz
 BuildRoot: %{_tmppath}/%{name}-%{version}-root-%(%{__id_u} -n)
-URL: http://pear.h.isotoma.com/package/baskit
+URL: http://baskit.1stvamp.net/package/baskit
 BuildRequires: PEAR >= 1.4.7
 
 BuildArch: noarch
@@ -67,7 +67,7 @@ mv %{_bindir}/baskit/baskit %{_bindir}/baskit
 
 %postun
 if [ "$1" -eq "0" ]; then
-    pear uninstall --nodeps --ignore-errors --register-only pear.h.isotoma.com/baskit
+    pear uninstall --nodeps --ignore-errors --register-only baskit.1stvamp.net
 fi
 
 %files
